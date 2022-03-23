@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "630827268393",
+    "project_id": "it-dictionary-2f6d4",
+    "storage_bucket": "it-dictionary-2f6d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630827268393:android:b483dd43576622a7031f38",
+        "android_client_info": {
+          "package_name": "gordeev.it_dictionary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630827268393-kl1q0r47pd3q8rbblms0ros8uko3q9v2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKiIswZntLyVF8Wico2IwQiabnkHSHkL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630827268393-kl1q0r47pd3q8rbblms0ros8uko3q9v2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

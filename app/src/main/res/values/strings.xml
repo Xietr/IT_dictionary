@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">IT_dictionary</string>
+    <string name="bottom_navigation_home">Главная</string>
+    <string name="bottom_navigation_suggest">Предложить</string>
+    <string name="bottom_navigation_favorite">Избранное</string>
+
+    <string name="favorite_screen_title">Избранное</string>
+
+    <string name="home_screen_title">Наборы</string>
+    <string name="home_search_placeholder">Поиск слов</string>
+
+    <string name="suggest_screen_title">Предложение</string>
+    <string name="suggest_screen_help_text">Не хватает какого-то слова в приложении? Оставьте заявку и мы обязательно его добавим.</string>
+    <string name="suggest_screen_word_field_label_text">Слово</string>
+    <string name="suggest_screen_set_field_label_text">Набор</string>
+    <string name="suggest_screen_meaning_field_label_text">Определение</string>
+    <string name="suggest_screen_button">Отправить заявку</string>
+
+    <string name="training_screen_back_icon_description">Назад</string>
+    <string name="training_screen_memorized_button">Запомнил</string>
+    <string name="training_screen_repeat_button">Повторять</string>
+
+    <plurals name="terms_amount">
+        <item quantity="zero">нет терминов</item>
+        <item quantity="one">%d термин</item>
+        <item quantity="two">%d термина</item>
+        <item quantity="few">%d термина</item>
+        <item quantity="many">%d терминов много</item>
+        <item quantity="other">%d терминов хз</item>
+    </plurals>
 </resources>

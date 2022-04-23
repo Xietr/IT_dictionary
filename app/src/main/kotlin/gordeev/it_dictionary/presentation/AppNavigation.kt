@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import gordeev.it_dictionary.presentation.screens.add_terms_from_set.AddTermsFromSetScreen
 import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
 
@@ -59,6 +60,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.Home.createRoute(Screen.Home),
     ) {
         addHomeScreen(navController, Screen.Home)
+        addTermsFromSetScreen(navController, Screen.Home)
     }
 }
 
@@ -70,6 +72,7 @@ private fun NavGraphBuilder.addSuggestingTopLevel(
         route = Screen.Suggest.route,
         startDestination = LeafScreen.Suggest.createRoute(Screen.Suggest),
     ) {
+        addSuggestScreen(navController, Screen.Suggest)
     }
 }
 
@@ -81,6 +84,7 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
         route = Screen.Favorite.route,
         startDestination = LeafScreen.Favorite.createRoute(Screen.Favorite),
     ) {
+
     }
 }
 
@@ -105,5 +109,17 @@ private fun NavGraphBuilder.addSuggestScreen(
         route = LeafScreen.Suggest.createRoute(root)
     ) {
         SuggestScreen()
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addTermsFromSetScreen(
+    navController: NavController,
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.Home.createRoute(root)
+    ) {
+        AddTermsFromSetScreen()
     }
 }

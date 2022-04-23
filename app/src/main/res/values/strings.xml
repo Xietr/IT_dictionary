@@ -4,6 +4,8 @@
     <string name="bottom_navigation_suggest">Предложить</string>
     <string name="bottom_navigation_favorite">Избранное</string>
 
+    <string name="add_terms_from_set_button">Добавить слова</string>
+
     <string name="favorite_screen_title">Избранное</string>
 
     <string name="search_placeholder">Поиск слов</string>

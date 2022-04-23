@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import gordeev.it_dictionary.R
-import gordeev.it_dictionary.presentation.utils.screenEdgeOffset
+import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
 
 @Preview
 @Composable
@@ -37,7 +37,7 @@ fun TrainingScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 4.dp, end = screenEdgeOffset),
+                .padding(top = 4.dp, end = screenEdgeOffsetHorizontal),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -55,16 +55,16 @@ fun TrainingScreen() {
         }
         Text(
             text = title,
-            modifier = Modifier.padding(horizontal = screenEdgeOffset)
+            modifier = Modifier.padding(horizontal = screenEdgeOffsetHorizontal)
         )
         Text(
             text = meaning,
-            modifier = Modifier.padding(horizontal = screenEdgeOffset)
+            modifier = Modifier.padding(horizontal = screenEdgeOffsetHorizontal)
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = screenEdgeOffset),
+                .padding(horizontal = screenEdgeOffsetHorizontal),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(1f)) {

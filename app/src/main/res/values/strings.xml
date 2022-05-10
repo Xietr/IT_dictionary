@@ -11,6 +11,9 @@
     <string name="search_placeholder">Поиск слов</string>
 
     <string name="home_screen_title">Наборы</string>
+    <string name="home_screen_add_to_favorite_dialog">Вы хотите добавить все слова из набора или выбрать определённые?</string>
+    <string name="home_screen_add_to_favorite_dialog_choose_words_button">Выбрать слова</string>
+    <string name="home_screen_add_to_favorite_dialog_all_button">Все</string>
 
     <string name="suggest_screen_title">Предложение</string>
     <string name="suggest_screen_help_text">Не хватает какого-то слова в приложении? Оставьте заявку и мы обязательно его добавим.</string>

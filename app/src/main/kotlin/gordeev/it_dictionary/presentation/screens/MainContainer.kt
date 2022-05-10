@@ -6,6 +6,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -77,7 +78,8 @@ fun MainContainer() {
         AppNavigation(
             navController = navController,
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(it),
         )
     }
 }

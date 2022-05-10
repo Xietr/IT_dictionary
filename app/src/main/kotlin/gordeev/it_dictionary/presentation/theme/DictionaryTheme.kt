@@ -5,13 +5,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ItDictionaryTheme(
+fun DictionaryTheme(
     useDarkColors: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colors = ItDictionaryLightColors,
-        typography = ItDictionaryTypography(),
+        colors = dictionaryLightColors,
+        typography = dictionaryTypography(),
+        shapes = dictionaryShapes(),
         content = content
     )
 }

@@ -9,9 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import gordeev.it_dictionary.presentation.LeafScreen.Companion.termSetPartialAddArg
 import gordeev.it_dictionary.presentation.screens.add_terms_from_set.AddTermsFromSetScreen
 import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
@@ -30,6 +33,16 @@ private sealed class LeafScreen(
     object Home : LeafScreen("home")
     object Suggest : LeafScreen("suggest")
     object Favorite : LeafScreen("favorite")
+
+    object TermSetPartialAdd : LeafScreen("termSet/{$termSetPartialAddArg}") {
+        fun createRoute(root: Screen, termSetId: String): String {
+            return "${root.route}/termSet/$termSetId"
+        }
+    }
+
+    companion object {
+        const val termSetPartialAddArg = "termSetPartialAdd"
+    }
 }
 
 @ExperimentalAnimationApi
@@ -60,7 +73,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.Home.createRoute(Screen.Home),
     ) {
         addHomeScreen(navController, Screen.Home)
-        addTermsFromSetScreen(navController, Screen.Home)
+        //        addTermsFromSetScreen(navController, Screen.Home)
     }
 }
 
@@ -96,7 +109,24 @@ private fun NavGraphBuilder.addHomeScreen(
     composable(
         route = LeafScreen.Home.createRoute(root)
     ) {
-        HomeScreen()
+        HomeScreen {
+            navController.navigate(LeafScreen.TermSetPartialAdd.createRoute(root, it))
+        }
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addTermsFromSet(
+    navController: NavController,
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.TermSetPartialAdd.createRoute(root),
+        arguments = listOf(
+            navArgument(termSetPartialAddArg) { type = NavType.StringType }
+        ),
+    ) {
+
     }
 }
 

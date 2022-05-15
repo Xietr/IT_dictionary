@@ -1,4 +1,4 @@
-package gordeev.it_dictionary.presentation.screens.add_terms_from_set
+package gordeev.it_dictionary.presentation.screens.term_set_partial_add
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
@@ -37,7 +37,7 @@ import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetVertical
 
 @Preview
 @Composable
-fun AddTermsFromSetScreen() {
+fun TermSetPartialAddScreen() {
     val listState = rememberLazyListState()
     val scrollOffset: Float = minOf(
         1f,
@@ -45,7 +45,7 @@ fun AddTermsFromSetScreen() {
     )
     Scaffold(
         topBar = {
-            AddTermsFromSetCollapsingToolbar(scrollOffset)
+            CollapsingToolbar(scrollOffset)
         }
     ) {
         Box(
@@ -103,7 +103,7 @@ private fun Modifier.drawUnderline(lineWidth: Dp = 1.dp, color: Color = Color(0x
 }
 
 @Composable
-private fun AddTermsFromSetCollapsingToolbar(scrollOffset: Float) {
+private fun CollapsingToolbar(scrollOffset: Float) {
     val containerHeight by animateDpAsState(targetValue = max(48.dp, 128.dp * scrollOffset))
     val descriptionLines = maxOf(1f, scrollOffset * 6).toInt()
     val category = object {

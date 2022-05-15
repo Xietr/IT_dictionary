@@ -71,6 +71,21 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0'
+    //Store
+    implementation "com.dropbox.mobile.store:store4:4.0.5"
+    //Room
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    //Paging
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    //Logging
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+    //Json
+    implementation "com.squareup.moshi:moshi-kotlin:1.13.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.13.0"
 }
 
 kapt {

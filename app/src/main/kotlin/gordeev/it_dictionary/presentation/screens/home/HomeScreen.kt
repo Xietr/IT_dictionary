@@ -30,16 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import gordeev.it_dictionary.R
-import gordeev.it_dictionary.model.TermSet
+import gordeev.it_dictionary.data.local.entities.TermSet
 import gordeev.it_dictionary.presentation.ui.SearchTextField
-import gordeev.it_dictionary.presentation.utils.rememberStateWithLifecycle
+import gordeev.it_dictionary.presentation.utils.rememberFlowWithLifecycle
 import gordeev.it_dictionary.presentation.utils.stringQuantityResource
 
 @Composable
@@ -54,15 +56,16 @@ private fun HomeScreen(
     viewModel: HomeViewModel,
     onChooseWordsClicked: (termSetId: String) -> Unit = {},
 ) {
-    val viewState by rememberStateWithLifecycle(stateFlow = viewModel.state)
+    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
 
     var termSetIdToAdd by remember { mutableStateOf<String?>(null) }
     val dialogVisible by remember(termSetIdToAdd) { mutableStateOf(termSetIdToAdd != null) }
 
     HomeScreen(
-        state = viewState,
+        list = pagingItems,
+        isLoading = pagingItems.loadState.run { refresh == LoadState.Loading || append == LoadState.Loading },
         dialogVisible = dialogVisible,
-        onRefresh = { viewModel.onRefresh() },
+        onRefresh = { pagingItems.refresh() },
         onDismissRequest = { termSetIdToAdd = null },
         onChooseWordsClicked = { onChooseWordsClicked(termSetIdToAdd!!) },
         onChooseAllWordsClicked = { viewModel.addTermSetToFavorite(termSetIdToAdd!!) },
@@ -70,11 +73,11 @@ private fun HomeScreen(
     )
 }
 
-@Preview
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
-    state: HomeViewState = HomeViewState.Empty,
+    isLoading: Boolean,
+    list: LazyPagingItems<TermSet>,
     dialogVisible: Boolean = false,
     onRefresh: () -> Unit = {},
     onDismissRequest: () -> Unit = {},
@@ -103,7 +106,7 @@ private fun HomeScreen(
                 style = MaterialTheme.typography.h5.copy(fontWeight = Bold)
             )
             SwipeRefresh(
-                state = rememberSwipeRefreshState(state.loading),
+                state = rememberSwipeRefreshState(isLoading),
                 onRefresh = onRefresh,
                 indicator = { state, trigger ->
                     SwipeRefreshIndicator(
@@ -119,12 +122,11 @@ private fun HomeScreen(
                     contentPadding = paddingValues,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    state.dictionary.forEach {
-                        item {
-                            HomeItem(
-                                it,
-                                onFavoriteClicked
-                            )
+                    for (index in 0 until list.itemCount) {
+                        list[index]?.let {
+                            item {
+                                HomeItem(termSet = it, onFavoriteClicked = onFavoriteClicked)
+                            }
                         }
                     }
                 }
@@ -135,8 +137,8 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeItem(
-    termSet: TermSet = TermSet(),
-    onFavoriteClicked: (id: String) -> Unit = {}
+    termSet: TermSet,
+    onFavoriteClicked: (id: String) -> Unit
 ) {
     Column(
         modifier = Modifier

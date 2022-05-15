@@ -14,16 +14,17 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import gordeev.it_dictionary.presentation.LeafScreen.Companion.termSetPartialAddArg
-import gordeev.it_dictionary.presentation.screens.add_terms_from_set.AddTermsFromSetScreen
 import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
+import gordeev.it_dictionary.presentation.screens.term_set_partial_add.TermSetPartialAddScreen
 
 internal sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Suggest : Screen("suggest")
     object Favorite : Screen("favorite")
 }
+
+const val termSetPartialAddArg = "termSetPartialAdd"
 
 private sealed class LeafScreen(
     private val route: String,
@@ -38,10 +39,6 @@ private sealed class LeafScreen(
         fun createRoute(root: Screen, termSetId: String): String {
             return "${root.route}/termSet/$termSetId"
         }
-    }
-
-    companion object {
-        const val termSetPartialAddArg = "termSetPartialAdd"
     }
 }
 
@@ -126,7 +123,7 @@ private fun NavGraphBuilder.addTermsFromSet(
             navArgument(termSetPartialAddArg) { type = NavType.StringType }
         ),
     ) {
-
+        TermSetPartialAddScreen()
     }
 }
 
@@ -139,17 +136,5 @@ private fun NavGraphBuilder.addSuggestScreen(
         route = LeafScreen.Suggest.createRoute(root)
     ) {
         SuggestScreen()
-    }
-}
-
-@ExperimentalAnimationApi
-private fun NavGraphBuilder.addTermsFromSetScreen(
-    navController: NavController,
-    root: Screen,
-) {
-    composable(
-        route = LeafScreen.Home.createRoute(root)
-    ) {
-        AddTermsFromSetScreen()
     }
 }

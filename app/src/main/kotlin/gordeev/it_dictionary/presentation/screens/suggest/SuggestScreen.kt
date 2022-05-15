@@ -59,9 +59,11 @@ fun SuggestScreen() {
                 Text(text = stringResource(id = R.string.suggest_screen_meaning_field_label_text))
             }
         )
-        Box(modifier = Modifier
-            .weight(1f)
-            .padding(bottom = 48.dp), contentAlignment = Alignment.BottomCenter) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(bottom = 48.dp), contentAlignment = Alignment.BottomCenter
+        ) {
             Button(modifier = Modifier.fillMaxWidth(), onClick = { /*TODO*/ }) {
                 Text(text = stringResource(id = R.string.suggest_screen_button))
             }

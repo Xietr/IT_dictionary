@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Secondary
 
-private val textButtonPaddings = PaddingValues(16.dp)
+private val textButtonPaddings = PaddingValues(20.dp)
 
 enum class TextButtonColors {
     Primary,
@@ -56,6 +56,9 @@ fun TextButton(
         colors = textButtonColors,
         contentPadding = textButtonPaddings
     ) {
-        Text(text = stringResource(id = textRes))
+        Text(
+            text = stringResource(id = textRes),
+            style = MaterialTheme.typography.h6
+        )
     }
 }

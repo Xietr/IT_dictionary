@@ -8,7 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import gordeev.it_dictionary.data.local.DictionaryRoomDatabase
+import gordeev.it_dictionary.data.data_sources.local.DictionaryRoomDatabase
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)

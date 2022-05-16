@@ -1,11 +1,11 @@
-package gordeev.it_dictionary.data.local
+package gordeev.it_dictionary.data.data_sources.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import gordeev.it_dictionary.data.local.converters.TermsConverter
-import gordeev.it_dictionary.data.local.daos.DictionaryDao
-import gordeev.it_dictionary.data.local.entities.TermSet
+import gordeev.it_dictionary.data.data_sources.local.converters.TermsConverter
+import gordeev.it_dictionary.data.data_sources.local.daos.DictionaryDao
+import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
 
 @Database(entities = [TermSet::class], version = 1)
 @TypeConverters(TermsConverter::class)

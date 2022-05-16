@@ -37,7 +37,9 @@ import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetVertical
 
 @Preview
 @Composable
-fun TermSetPartialAddScreen() {
+fun TermSetPartialAddScreen(
+
+) {
     val listState = rememberLazyListState()
     val scrollOffset: Float = minOf(
         1f,

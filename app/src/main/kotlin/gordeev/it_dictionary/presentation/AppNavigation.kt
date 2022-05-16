@@ -35,7 +35,7 @@ private sealed class LeafScreen(
     object Suggest : LeafScreen("suggest")
     object Favorite : LeafScreen("favorite")
 
-    object TermSetPartialAdd : LeafScreen("termSet/{$termSetPartialAddArg}") {
+    object TermSetPartialAddToFavorite : LeafScreen("termSet/{$termSetPartialAddArg}") {
         fun createRoute(root: Screen, termSetId: String): String {
             return "${root.route}/termSet/$termSetId"
         }
@@ -70,7 +70,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.Home.createRoute(Screen.Home),
     ) {
         addHomeScreen(navController, Screen.Home)
-        //        addTermsFromSetScreen(navController, Screen.Home)
+        addTermsFromSetToFavorite(navController, Screen.Home)
     }
 }
 
@@ -107,18 +107,18 @@ private fun NavGraphBuilder.addHomeScreen(
         route = LeafScreen.Home.createRoute(root)
     ) {
         HomeScreen {
-            navController.navigate(LeafScreen.TermSetPartialAdd.createRoute(root, it))
+            navController.navigate(LeafScreen.TermSetPartialAddToFavorite.createRoute(root, it))
         }
     }
 }
 
 @ExperimentalAnimationApi
-private fun NavGraphBuilder.addTermsFromSet(
+private fun NavGraphBuilder.addTermsFromSetToFavorite(
     navController: NavController,
     root: Screen,
 ) {
     composable(
-        route = LeafScreen.TermSetPartialAdd.createRoute(root),
+        route = LeafScreen.TermSetPartialAddToFavorite.createRoute(root),
         arguments = listOf(
             navArgument(termSetPartialAddArg) { type = NavType.StringType }
         ),

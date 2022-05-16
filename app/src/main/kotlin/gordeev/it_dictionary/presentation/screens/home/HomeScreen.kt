@@ -39,7 +39,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import gordeev.it_dictionary.R
-import gordeev.it_dictionary.data.local.entities.TermSet
+import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
 import gordeev.it_dictionary.presentation.ui.SearchTextField
 import gordeev.it_dictionary.presentation.utils.rememberFlowWithLifecycle
 import gordeev.it_dictionary.presentation.utils.stringQuantityResource
@@ -57,6 +57,7 @@ private fun HomeScreen(
     onChooseWordsClicked: (termSetId: String) -> Unit = {},
 ) {
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
+    pagingItems.retry()
 
     var termSetIdToAdd by remember { mutableStateOf<String?>(null) }
     val dialogVisible by remember(termSetIdToAdd) { mutableStateOf(termSetIdToAdd != null) }

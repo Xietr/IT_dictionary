@@ -2,7 +2,7 @@ package gordeev.it_dictionary.data
 
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import gordeev.it_dictionary.data.local.entities.TermSet
+import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
 import kotlinx.coroutines.flow.Flow
 
 interface DictionaryRepository {

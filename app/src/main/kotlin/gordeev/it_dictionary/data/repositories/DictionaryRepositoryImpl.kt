@@ -1,4 +1,4 @@
-package gordeev.it_dictionary.data
+package gordeev.it_dictionary.data.repositories
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager

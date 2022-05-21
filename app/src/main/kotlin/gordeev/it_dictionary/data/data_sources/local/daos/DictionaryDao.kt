@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import gordeev.it_dictionary.data.data_sources.local.entities.Dictionary
 import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DictionaryDao {
@@ -24,4 +26,10 @@ interface DictionaryDao {
 
     @Query("SELECT * FROM dictionary WHERE id = :id")
     suspend fun getTermSet(id: String): TermSet?
+
+    @Query("SELECT * FROM dictionary WHERE id = :id")
+    fun getTermSetObservable(id: String): Flow<TermSet?>
+
+    @Update
+    suspend fun updateTermSet(termSet: TermSet)
 }

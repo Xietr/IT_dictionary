@@ -57,7 +57,6 @@ private fun HomeScreen(
     onChooseWordsClicked: (termSetId: String) -> Unit = {},
 ) {
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
-    pagingItems.retry()
 
     var termSetIdToAdd by remember { mutableStateOf<String?>(null) }
     val dialogVisible by remember(termSetIdToAdd) { mutableStateOf(termSetIdToAdd != null) }

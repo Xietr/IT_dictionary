@@ -13,11 +13,14 @@ data class TermSet(
     val name: String,
     val description: String,
     @TypeConverters(TermsConverter::class)
-    val terms: List<Term>,
-    val isFavorite: Boolean,
+    val terms: List<Term>
 ) : PaginatedEntity {
+
+    val isFavorite: Boolean
+        get() = terms.any { it.isFavorite }
+
     companion object {
         fun RemoteTermSet.fromRemoteTermSet(isFavorite: Boolean = false) =
-            TermSet(id, name, description, terms.map { it.fromRemoteTerm(isFavorite) }, isFavorite)
+            TermSet(id, name, description, terms.map { it.fromRemoteTerm(isFavorite) })
     }
 }

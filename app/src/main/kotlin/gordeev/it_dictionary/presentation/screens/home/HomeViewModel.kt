@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import gordeev.it_dictionary.data.DictionaryRepository
+import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import javax.inject.Inject
 
 @HiltViewModel

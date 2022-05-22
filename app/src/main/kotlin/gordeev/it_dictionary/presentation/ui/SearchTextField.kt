@@ -22,7 +22,7 @@ import gordeev.it_dictionary.R
 fun SearchTextField(
     modifier: Modifier = Modifier,
     value: TextFieldValue = TextFieldValue(),
-    onValueChange: (TextFieldValue) -> Unit,
+    onValueChange: (TextFieldValue) -> Unit = {},
     placeholder: String = stringResource(id = R.string.search_placeholder),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),

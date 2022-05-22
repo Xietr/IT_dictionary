@@ -11,10 +11,20 @@ import androidx.compose.ui.unit.sp
 fun dictionaryTypography(): Typography {
     return MaterialTheme.typography
         .copy(
+            h5 = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                letterSpacing = 0.3.sp
+            ),
+            body1 = TextStyle(
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                letterSpacing = 0.1.sp
+            ),
             button = TextStyle(
                 fontWeight = FontWeight.Medium,
                 fontSize = 20.sp,
-                letterSpacing = 0.5.sp
+                letterSpacing = 0.3.sp
             )
         )
 }

@@ -3,8 +3,11 @@ package gordeev.it_dictionary.presentation.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
@@ -16,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Secondary
 
-private val textButtonPaddings = PaddingValues(20.dp)
+private val textButtonPaddings = 20.dp
 
 enum class TextButtonColors {
     Primary,
@@ -30,6 +33,7 @@ fun TextButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     colors: TextButtonColors,
+    isLoading: Boolean = false,
     @StringRes textRes: Int
 ) {
     val textButtonColors = when (colors) {
@@ -54,11 +58,19 @@ fun TextButton(
         enabled = enabled,
         interactionSource = interactionSource,
         colors = textButtonColors,
-        contentPadding = textButtonPaddings
+        contentPadding = PaddingValues()
     ) {
-        Text(
-            text = stringResource(id = textRes),
-            style = MaterialTheme.typography.h6
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.padding(textButtonPaddings - 10.dp),
+                color = LocalContentColor.current
+            )
+        } else {
+            Text(
+                modifier = Modifier.padding(textButtonPaddings),
+                text = stringResource(id = textRes),
+                style = MaterialTheme.typography.button
+            )
+        }
     }
 }

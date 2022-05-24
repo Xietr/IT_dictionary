@@ -3,7 +3,7 @@ package gordeev.it_dictionary.data.data_sources.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.JsonClass
-import gordeev.it_dictionary.data.data_sources.remote.entities.RemoteTerm
+import gordeev.it_dictionary.data.data_sources.remote.entities.responses.RemoteTerm
 
 @JsonClass(generateAdapter = true)
 @Entity

@@ -1,4 +1,4 @@
-package gordeev.it_dictionary.data.repositories
+package gordeev.it_dictionary.data.data_sources
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -9,7 +9,7 @@ import gordeev.it_dictionary.data.data_sources.remote.DictionaryRemoteDataSource
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-class DictionaryPagingRepository @Inject constructor(
+class DictionaryPagingSource @Inject constructor(
     private val dictionaryRemoteDataSource: DictionaryRemoteDataSource,
     private val dictionaryDao: DictionaryDao
 ) : PagingSource<String, TermSet>() {

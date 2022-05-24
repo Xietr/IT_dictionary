@@ -25,6 +25,9 @@
     <string name="training_screen_back_icon_description">Назад</string>
     <string name="training_screen_memorized_button">Запомнил</string>
     <string name="training_screen_repeat_button">Повторять</string>
+    <string name="suggest_screen_network_error_message">Ошибка сети</string>
+    <string name="suggest_screen_empty_input_error_message">Все поля должны быть заполнены</string>
+    <string name="suggest_screen_success_message">Заявка отправлена</string>
 
     <plurals name="terms_amount">
         <item quantity="zero">нет терминов</item>

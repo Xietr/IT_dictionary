@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import gordeev.it_dictionary.data.data_sources.local.converters.TermsConverter
 import gordeev.it_dictionary.data.data_sources.local.entities.Term.Companion.fromRemoteTerm
-import gordeev.it_dictionary.data.data_sources.remote.entities.RemoteTermSet
+import gordeev.it_dictionary.data.data_sources.remote.entities.responses.RemoteTermSet
 
 @Entity(tableName = "dictionary")
 data class TermSet(

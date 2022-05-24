@@ -9,7 +9,7 @@ import gordeev.it_dictionary.data.repositories.DictionaryRepositoryImpl
 import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
 import gordeev.it_dictionary.data.data_sources.remote.DictionaryRemoteDataSource
 import gordeev.it_dictionary.data.data_sources.remote.firebase.DictionaryFirebaseDataSource
-import gordeev.it_dictionary.data.repositories.DictionaryPagingRepository
+import gordeev.it_dictionary.data.data_sources.DictionaryPagingSource
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import javax.inject.Singleton
 
@@ -21,7 +21,7 @@ abstract class DataModule {
     internal abstract fun provideFirebaseDataSource(bind: DictionaryFirebaseDataSource): DictionaryRemoteDataSource
 
     @Binds
-    internal abstract fun provideDictionaryPagingSource(bind: DictionaryPagingRepository): PagingSource<String, TermSet>
+    internal abstract fun provideDictionaryPagingSource(bind: DictionaryPagingSource): PagingSource<String, TermSet>
 
     @Singleton
     @Binds

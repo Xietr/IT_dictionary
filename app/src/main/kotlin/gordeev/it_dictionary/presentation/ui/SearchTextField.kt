@@ -15,18 +15,18 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import gordeev.it_dictionary.R
 
 @Composable
 fun SearchTextField(
     modifier: Modifier = Modifier,
-    value: TextFieldValue = TextFieldValue(),
-    onValueChange: (TextFieldValue) -> Unit = {},
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
     placeholder: String = stringResource(id = R.string.search_placeholder),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    readOnly: Boolean = false
+    readOnly: Boolean = false,
+    enabled: Boolean = true,
 ) {
     OutlinedTextField(
         value = value,
@@ -36,16 +36,16 @@ fun SearchTextField(
         },
         trailingIcon = {
             AnimatedVisibility(
-                visible = value.text.isNotEmpty(),
+                visible = value.isNotEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
                 IconButton(
-                    onClick = { onValueChange(TextFieldValue()) },
+                    onClick = { onValueChange("") },
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "smth" //todo
+                        contentDescription = null
                     )
                 }
             }
@@ -56,6 +56,7 @@ fun SearchTextField(
         maxLines = 1,
         singleLine = true,
         modifier = modifier,
-        readOnly = readOnly
+        readOnly = readOnly,
+        enabled = enabled
     )
 }

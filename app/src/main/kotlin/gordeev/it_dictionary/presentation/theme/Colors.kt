@@ -1,6 +1,9 @@
 package gordeev.it_dictionary.presentation.theme
 
+import androidx.compose.material.CheckboxColors
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val Text10 = Color(0xFFFFFFFF)
@@ -16,3 +19,10 @@ val dictionaryLightColors = lightColors(
     secondary = Bg20,
     onSecondary = Text30,
 )
+
+val checkboxColors: CheckboxColors
+    @Composable get() = CheckboxDefaults.colors(
+        checkedColor = Bg30,
+        uncheckedColor = Bg30,
+        checkmarkColor = Color.Black
+    )

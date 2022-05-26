@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package gordeev.it_dictionary.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -16,6 +18,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
+import gordeev.it_dictionary.presentation.screens.term_search.TermSearchScreen
 import gordeev.it_dictionary.presentation.screens.term_set_partial_add.TermSetPartialAddScreen
 
 internal sealed class Screen(val route: String) {
@@ -35,6 +38,8 @@ private sealed class LeafScreen(
     object Suggest : LeafScreen("suggest")
     object Favorite : LeafScreen("favorite")
 
+    object Search : LeafScreen("search")
+
     object TermSetPartialAddToFavorite : LeafScreen("termSet/{$termSetPartialAddArg}") {
         fun createRoute(root: Screen, termSetId: String): String {
             return "${root.route}/termSet/$termSetId"
@@ -42,7 +47,6 @@ private sealed class LeafScreen(
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 internal fun AppNavigation(
     navController: NavHostController,
@@ -61,7 +65,6 @@ internal fun AppNavigation(
     }
 }
 
-@ExperimentalAnimationApi
 private fun NavGraphBuilder.addHomeTopLevel(
     navController: NavController
 ) {
@@ -70,11 +73,11 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.Home.createRoute(Screen.Home),
     ) {
         addHomeScreen(navController, Screen.Home)
-        addTermsFromSetToFavorite(navController, Screen.Home)
+        addTermSearchScreen(Screen.Home)
+        addTermsFromSetToFavorite(Screen.Home)
     }
 }
 
-@ExperimentalAnimationApi
 private fun NavGraphBuilder.addSuggestingTopLevel(
     navController: NavController
 ) {
@@ -82,11 +85,10 @@ private fun NavGraphBuilder.addSuggestingTopLevel(
         route = Screen.Suggest.route,
         startDestination = LeafScreen.Suggest.createRoute(Screen.Suggest),
     ) {
-        addSuggestScreen(navController, Screen.Suggest)
+        addSuggestScreen(Screen.Suggest)
     }
 }
 
-@ExperimentalAnimationApi
 private fun NavGraphBuilder.addFavoriteTopLevel(
     navController: NavController
 ) {
@@ -98,7 +100,6 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
     }
 }
 
-@ExperimentalAnimationApi
 private fun NavGraphBuilder.addHomeScreen(
     navController: NavController,
     root: Screen,
@@ -106,15 +107,28 @@ private fun NavGraphBuilder.addHomeScreen(
     composable(
         route = LeafScreen.Home.createRoute(root)
     ) {
-        HomeScreen {
-            navController.navigate(LeafScreen.TermSetPartialAddToFavorite.createRoute(root, it))
-        }
+        HomeScreen(
+            openPartialAddFromSet = {
+                navController.navigate(LeafScreen.TermSetPartialAddToFavorite.createRoute(root, it))
+            },
+            openSearchScreen = {
+                navController.navigate(LeafScreen.Search.createRoute(root))
+            }
+        )
     }
 }
 
-@ExperimentalAnimationApi
+private fun NavGraphBuilder.addTermSearchScreen(
+    root: Screen
+) {
+    composable(
+        route = LeafScreen.Search.createRoute(root)
+    ) {
+        TermSearchScreen()
+    }
+}
+
 private fun NavGraphBuilder.addTermsFromSetToFavorite(
-    navController: NavController,
     root: Screen,
 ) {
     composable(
@@ -127,9 +141,7 @@ private fun NavGraphBuilder.addTermsFromSetToFavorite(
     }
 }
 
-@ExperimentalAnimationApi
 private fun NavGraphBuilder.addSuggestScreen(
-    navController: NavController,
     root: Screen,
 ) {
     composable(

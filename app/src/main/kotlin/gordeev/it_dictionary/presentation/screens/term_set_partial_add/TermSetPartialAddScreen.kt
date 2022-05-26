@@ -19,17 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import gordeev.it_dictionary.R
-import gordeev.it_dictionary.data.data_sources.local.entities.Term
-import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
+import gordeev.it_dictionary.data.data_sources.local.entities.result.Term
+import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
+import gordeev.it_dictionary.presentation.theme.checkboxColors
 import gordeev.it_dictionary.presentation.ui.TextButton
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
+import gordeev.it_dictionary.presentation.utils.drawUnderline
 import gordeev.it_dictionary.presentation.utils.rememberStateWithLifecycle
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetVertical
@@ -55,13 +53,15 @@ private fun TermSetPartialAddScreen(
 
 @Composable
 private fun TermSetPartialAddScreen(
-    termSet: TermSet,
+    termSetWithTerms: TermSetWithTerms,
     onButtonClick: () -> Unit,
     onFavoriteChanged: (Term, Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
-            Toolbar(termSet.name, termSet.description)
+            with(termSetWithTerms.termSet) {
+                Toolbar(name, description)
+            }
         }
     ) {
         Column(
@@ -72,9 +72,9 @@ private fun TermSetPartialAddScreen(
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
-                termSet.terms.forEach { term ->
+                termSetWithTerms.terms.forEach { term ->
                     item {
-                        AddTermsFromSetItem(term) {
+                        AddTermSearchResult(term) {
                             onFavoriteChanged(term, it)
                         }
                     }
@@ -118,27 +118,14 @@ private fun Toolbar(name: String, description: String) {
 }
 
 @Composable
-private fun AddTermsFromSetItem(term: Term, onCheckedChange: (Boolean) -> Unit) {
+private fun AddTermSearchResult(term: Term, onCheckedChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .drawUnderline()
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(checked = term.isFavorite, onCheckedChange = onCheckedChange)
-        Text(text = term.name, style = MaterialTheme.typography.h6)
-    }
-}
-
-private fun Modifier.drawUnderline(lineWidth: Dp = 1.dp, color: Color = Color(0xFFECECEE)): Modifier {
-    return drawBehind {
-        val strokeWidth = lineWidth.value * density
-        val y = size.height - strokeWidth / 2
-        drawLine(
-            color,
-            Offset(0f, y),
-            Offset(size.width, y),
-            strokeWidth
-        )
+        Checkbox(checked = term.isFavorite, onCheckedChange = onCheckedChange, colors = checkboxColors)
+        Text(text = term.termName, style = MaterialTheme.typography.h6)
     }
 }

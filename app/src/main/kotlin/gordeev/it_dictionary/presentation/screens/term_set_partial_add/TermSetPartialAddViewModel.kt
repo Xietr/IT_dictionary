@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gordeev.it_dictionary.data.data_sources.local.daos.DictionaryDao
-import gordeev.it_dictionary.data.data_sources.local.entities.Term
+import gordeev.it_dictionary.data.data_sources.local.entities.result.Term
+import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsFavorite
 import gordeev.it_dictionary.presentation.termSetPartialAddArg
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -24,13 +25,13 @@ class TermSetPartialAddViewModel @Inject constructor(
     private val selectedTermSetsIdToFavorite = MutableStateFlow(mapOf<String, Boolean>())
 
     val termSet = combine(
-        dictionaryDao.getTermSetObservable(termSetId),
+        dictionaryDao.getTermSetObservableById(termSetId),
         selectedTermSetsIdToFavorite
     ) { termSet, selected ->
         termSet?.let {
             it.copy(
                 terms = it.terms.map { term ->
-                    selected[term.id]?.let { isFavorite ->
+                    selected[term.termId]?.let { isFavorite ->
                         term.copy(isFavorite = isFavorite)
                     } ?: term
                 }
@@ -44,13 +45,13 @@ class TermSetPartialAddViewModel @Inject constructor(
 
     fun onAddWordsClicked() {
         viewModelScope.launch {
-            termSet.value?.let { dictionaryDao.updateTermSet(it) }
+            dictionaryDao.updateTermsAreFavorite(selectedTermSetsIdToFavorite.value.map { UpdateTermIsFavorite(it.key, it.value) })
         }
     }
 
     fun onFavoriteChanged(term: Term, isFavorite: Boolean) {
         selectedTermSetsIdToFavorite.value = selectedTermSetsIdToFavorite.value.toMutableMap().apply {
-            put(term.id, isFavorite)
+            put(term.termId, isFavorite)
         }
     }
 }

@@ -2,12 +2,12 @@ package gordeev.it_dictionary.data.data_sources.remote.firebase
 
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeError
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeStarted
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeSuccess
 import gordeev.it_dictionary.data.data_sources.remote.DictionaryRemoteDataSource
 import gordeev.it_dictionary.data.data_sources.remote.entities.requests.RequestToAddTerm
 import gordeev.it_dictionary.data.data_sources.remote.entities.responses.RemoteTermSet
+import gordeev.it_dictionary.data.data_sources.utils.InvokeError
+import gordeev.it_dictionary.data.data_sources.utils.InvokeStarted
+import gordeev.it_dictionary.data.data_sources.utils.InvokeSuccess
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -17,6 +17,7 @@ class DictionaryFirebaseDataSource @Inject constructor() : DictionaryRemoteDataS
 
     private val database = Firebase.database
 
+    @Throws(Exception::class)
     override suspend fun getDictionaryPart(startKey: String?, limit: Int): List<RemoteTermSet> =
         database
             .getReference(DICTIONARY_PATH)
@@ -28,16 +29,28 @@ class DictionaryFirebaseDataSource @Inject constructor() : DictionaryRemoteDataS
             }
             .limitToFirst(limit)
             .get()
+            .addOnFailureListener {
+                throw it
+            }
             .await()
             .children
-            .mapNotNull {
-                it.getValue(RemoteTermSet::class.java)?.copy(id = it?.key ?: "")
+            .mapNotNull { dataSnapshot ->
+                val termKeys = dataSnapshot.child("terms").children.mapNotNull { it.key }
+                val remoteTermSet = dataSnapshot.getValue(RemoteTermSet::class.java)?.copy(
+                    id = dataSnapshot?.key ?: ""
+                )
+                remoteTermSet?.copy(terms = remoteTermSet.terms.mapIndexed { index, remoteTerm ->
+                    remoteTerm.copy(id = remoteTermSet.id + "_" + termKeys[index])
+                })
             }
 
     override suspend fun getAllTermSetsName(): List<String> =
         database
             .getReference(DICTIONARY_PATH)
             .get()
+            .addOnFailureListener {
+                throw it
+            }
             .await()
             .children
             .mapNotNull { it.child("name").getValue(String::class.java) }

@@ -158,7 +158,8 @@ private fun TextFieldWithDropdown(
         expanded = expanded,
         onExpandedChange = {
             expanded = it
-        }
+        },
+        modifier = Modifier.fillMaxWidth()
     ) {
         TextField(
             value = value,

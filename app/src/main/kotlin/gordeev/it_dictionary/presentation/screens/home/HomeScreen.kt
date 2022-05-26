@@ -2,6 +2,7 @@ package gordeev.it_dictionary.presentation.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +39,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import gordeev.it_dictionary.R
-import gordeev.it_dictionary.data.data_sources.local.entities.TermSet
+import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.presentation.ui.SearchTextField
 import gordeev.it_dictionary.presentation.utils.rememberFlowWithLifecycle
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
@@ -48,14 +49,16 @@ import gordeev.it_dictionary.presentation.utils.stringQuantityResource
 @Composable
 fun HomeScreen(
     openPartialAddFromSet: (termSetId: String) -> Unit,
+    openSearchScreen: () -> Unit
 ) {
-    HomeScreen(hiltViewModel(), openPartialAddFromSet)
+    HomeScreen(hiltViewModel(), openPartialAddFromSet, openSearchScreen)
 }
 
 @Composable
 private fun HomeScreen(
     viewModel: HomeViewModel,
     onChooseWordsClicked: (termSetId: String) -> Unit = {},
+    openSearchScreen: () -> Unit
 ) {
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
 
@@ -70,7 +73,8 @@ private fun HomeScreen(
         onDismissRequest = { termSetIdToAdd = null },
         onChooseWordsClicked = { onChooseWordsClicked(termSetIdToAdd!!) },
         onChooseAllWordsClicked = { viewModel.addTermSetToFavorite(termSetIdToAdd!!) },
-        onFavoriteClicked = { termSetIdToAdd = it }
+        onFavoriteClicked = { termSetIdToAdd = it },
+        onSearchClicked = openSearchScreen
     )
 }
 
@@ -78,13 +82,14 @@ private fun HomeScreen(
 @Composable
 private fun HomeScreen(
     isLoading: Boolean,
-    list: LazyPagingItems<TermSet>,
+    list: LazyPagingItems<TermSetWithTerms>,
     dialogVisible: Boolean = false,
     onRefresh: () -> Unit = {},
     onDismissRequest: () -> Unit = {},
     onChooseWordsClicked: () -> Unit = {},
     onChooseAllWordsClicked: () -> Unit = {},
-    onFavoriteClicked: (id: String) -> Unit = {}
+    onFavoriteClicked: (id: String) -> Unit = {},
+    onSearchClicked: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -100,8 +105,11 @@ private fun HomeScreen(
         }
         Column(modifier = Modifier.padding(paddingValues)) {
             SearchTextField(
-                modifier = Modifier.fillMaxWidth(),
-                readOnly = true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSearchClicked() },
+                readOnly = true,
+                enabled = false
             )
             Text(
                 text = stringResource(id = R.string.home_screen_title),
@@ -130,7 +138,7 @@ private fun HomeScreen(
                             item {
                                 HomeItem(
                                     modifier = Modifier.weight(1f),
-                                    termSet = it,
+                                    termSetWithTerms = it,
                                     onFavoriteClicked = onFavoriteClicked
                                 )
                             }
@@ -152,7 +160,7 @@ private val gradientPairs = listOf(
 @Composable
 private fun HomeItem(
     modifier: Modifier,
-    termSet: TermSet,
+    termSetWithTerms: TermSetWithTerms,
     onFavoriteClicked: (id: String) -> Unit
 ) {
     val colors by remember {
@@ -176,24 +184,25 @@ private fun HomeItem(
         CompositionLocalProvider(LocalContentColor provides Color.White) {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = termSet.name,
+                    text = termSetWithTerms.termSet.name,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier
                         .weight(1f)
                         .padding(top = 16.dp),
                 )
                 IconButton(
-                    onClick = { onFavoriteClicked(termSet.id) },
+                    onClick = { onFavoriteClicked(termSetWithTerms.termSet.id) },
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(
-                        painter = if (termSet.isFavorite) painterResource(id = R.drawable.favorite_filled) else painterResource(id = R.drawable.favorite_outlined),
+                        //todo
+                        painter = if (true) painterResource(id = R.drawable.favorite_filled) else painterResource(id = R.drawable.favorite_outlined),
                         contentDescription = null,
                     )
                 }
             }
             Text(
-                stringQuantityResource(R.plurals.terms_amount, termSet.terms.count()),
+                stringQuantityResource(R.plurals.terms_amount, termSetWithTerms.terms.count()),
                 style = MaterialTheme.typography.subtitle1,
             )
         }

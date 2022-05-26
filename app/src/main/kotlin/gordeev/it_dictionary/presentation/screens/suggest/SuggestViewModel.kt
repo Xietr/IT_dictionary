@@ -3,9 +3,9 @@ package gordeev.it_dictionary.presentation.screens.suggest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeError
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeStarted
-import gordeev.it_dictionary.data.data_sources.invokeStatus.InvokeSuccess
+import gordeev.it_dictionary.data.data_sources.utils.InvokeError
+import gordeev.it_dictionary.data.data_sources.utils.InvokeStarted
+import gordeev.it_dictionary.data.data_sources.utils.InvokeSuccess
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import gordeev.it_dictionary.presentation.screens.suggest.ErrorType.EMPTY_INPUT
 import gordeev.it_dictionary.presentation.screens.suggest.ErrorType.NETWORK
@@ -53,7 +53,7 @@ class SuggestViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             termSetName.collect {
-                dictionaryRepository.getTermSetsByName(it).collect(termSetNameOptions)
+                dictionaryRepository.observableTermSetsByName(it).collect(termSetNameOptions)
             }
         }
     }

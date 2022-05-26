@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import gordeev.it_dictionary.data.data_sources.local.entities.PaginatedEntity
+import gordeev.it_dictionary.data.data_sources.local.entities.result.PaginatedEntity
 
 @OptIn(ExperimentalPagingApi::class)
 internal class PaginatedEntityRemoteMediator<E : PaginatedEntity> : RemoteMediator<String, E>() {

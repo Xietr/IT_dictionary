@@ -113,7 +113,7 @@ private fun AddTermSearchResult(
         Checkbox(checked = termSetWithTerm.term.isFavorite, onCheckedChange = onCheckedChange, colors = checkboxColors)
         Column {
             Text(text = termSetWithTerm.term.termName, style = MaterialTheme.typography.button)
-            Text(text = termSetWithTerm.termSet.name, style = MaterialTheme.typography.body1, color = Text20)
+            Text(text = termSetWithTerm.termSet.name, style = MaterialTheme.typography.subtitle1, color = Text20)
         }
     }
 }

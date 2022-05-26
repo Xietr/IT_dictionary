@@ -91,6 +91,20 @@ private fun HomeScreen(
     onFavoriteClicked: (id: String) -> Unit = {},
     onSearchClicked: () -> Unit
 ) {
+    val gradientPairs = listOf(
+        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
+        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
+        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
+        Color(0xFF9C1EBC) to Color(0xFFFF7676), //pink
+        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
+        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
+        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
+        Color(0xFF9C1EBC) to Color(0xFFFF7676), //pink
+        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
+        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
+        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
+        Color(0xFF9C1EBC) to Color(0xFFFF7676) //pink
+    )
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -137,9 +151,9 @@ private fun HomeScreen(
                         list[index]?.let {
                             item {
                                 HomeItem(
-                                    modifier = Modifier.weight(1f),
                                     termSetWithTerms = it,
-                                    onFavoriteClicked = onFavoriteClicked
+                                    onFavoriteClicked = onFavoriteClicked,
+                                    gradientPairs[index]
                                 )
                             }
                         }
@@ -150,32 +164,19 @@ private fun HomeScreen(
     }
 }
 
-private val gradientPairs = listOf(
-    Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
-    Color(0xFFD55C05) to Color(0xFFFABF26), //orange
-    Color(0xFFB0FF4B) to Color(0xFF11876B), //green
-    Color(0xFF9C1EBC) to Color(0xFFFF7676) //pink
-)
-
 @Composable
 private fun HomeItem(
-    modifier: Modifier,
     termSetWithTerms: TermSetWithTerms,
-    onFavoriteClicked: (id: String) -> Unit
+    onFavoriteClicked: (id: String) -> Unit,
+    color: Pair<Color, Color>
 ) {
-    val colors by remember {
-        mutableStateOf(
-            gradientPairs
-                .random()
-                .toList()
-        )
-    }
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxWidth()
             .aspectRatio(1f)
             .background(
                 Brush.linearGradient(
-                    colors
+                    color.toList()
                 ), RoundedCornerShape(24.dp)
             )
             .padding(start = 16.dp, bottom = 16.dp),

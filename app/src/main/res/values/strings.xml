@@ -29,6 +29,9 @@
     <string name="suggest_screen_empty_input_error_message">Все поля должны быть заполнены</string>
     <string name="suggest_screen_success_message">Заявка отправлена</string>
 
+    <string name="favorite_screen_learned">Изучены</string>
+    <string name="favorite_screen_to_learn">На изучении</string>
+
     <plurals name="terms_amount">
         <item quantity="zero">нет терминов</item>
         <item quantity="one">%d термин</item>

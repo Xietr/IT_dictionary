@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreen
 import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
 import gordeev.it_dictionary.presentation.screens.term_search.TermSearchScreen
@@ -96,7 +97,7 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
         route = Screen.Favorite.route,
         startDestination = LeafScreen.Favorite.createRoute(Screen.Favorite),
     ) {
-
+        addFavoriteScreen(Screen.Favorite)
     }
 }
 
@@ -148,5 +149,15 @@ private fun NavGraphBuilder.addSuggestScreen(
         route = LeafScreen.Suggest.createRoute(root)
     ) {
         SuggestScreen()
+    }
+}
+
+private fun NavGraphBuilder.addFavoriteScreen(
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.Favorite.createRoute(root)
+    ) {
+        FavoriteScreen()
     }
 }

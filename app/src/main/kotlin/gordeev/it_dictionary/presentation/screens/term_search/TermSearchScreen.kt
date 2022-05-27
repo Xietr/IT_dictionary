@@ -11,8 +11,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
@@ -58,6 +62,11 @@ private fun TermSearchScreen(
     onFavoriteChanged: (TermSetWithTerm, Boolean) -> Unit,
     onButtonClick: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +76,8 @@ private fun TermSearchScreen(
             SearchTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .focusRequester(focusRequester),
                 value = viewState.searchValue,
                 onValueChange = onSearchChanged
             )

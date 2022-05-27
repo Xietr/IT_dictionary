@@ -21,6 +21,7 @@ import gordeev.it_dictionary.presentation.screens.home.HomeScreen
 import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
 import gordeev.it_dictionary.presentation.screens.term_search.TermSearchScreen
 import gordeev.it_dictionary.presentation.screens.term_set_partial_add.TermSetPartialAddScreen
+import gordeev.it_dictionary.presentation.screens.training.TrainingScreen
 
 internal sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -38,6 +39,7 @@ private sealed class LeafScreen(
     object Home : LeafScreen("home")
     object Suggest : LeafScreen("suggest")
     object Favorite : LeafScreen("favorite")
+    object Training : LeafScreen("training")
 
     object Search : LeafScreen("search")
 
@@ -97,7 +99,8 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
         route = Screen.Favorite.route,
         startDestination = LeafScreen.Favorite.createRoute(Screen.Favorite),
     ) {
-        addFavoriteScreen(Screen.Favorite)
+        addFavoriteScreen(Screen.Favorite, navController)
+        addTrainingScreen(Screen.Favorite)
     }
 }
 
@@ -154,10 +157,23 @@ private fun NavGraphBuilder.addSuggestScreen(
 
 private fun NavGraphBuilder.addFavoriteScreen(
     root: Screen,
+    navController: NavController,
 ) {
     composable(
         route = LeafScreen.Favorite.createRoute(root)
     ) {
-        FavoriteScreen()
+        FavoriteScreen(
+            openTrainingScreen = { navController.navigate(LeafScreen.Training.createRoute(root)) }
+        )
+    }
+}
+
+private fun NavGraphBuilder.addTrainingScreen(
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.Training.createRoute(root)
+    ) {
+        TrainingScreen()
     }
 }

@@ -43,21 +43,21 @@ import gordeev.it_dictionary.presentation.utils.stringQuantityResource
 
 @Composable
 fun FavoriteScreen(
-
+    openTrainingScreen: () -> Unit
 ) {
     FavoriteScreen(
+        openTrainingScreen = openTrainingScreen,
         currentTab = TO_LEARN,
         onTabClicked = {},
-        onFavoriteClicked = {}
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FavoriteScreen(
+    openTrainingScreen: () -> Unit,
     currentTab: FavoriteScreenTabs,
     onTabClicked: (FavoriteScreenTabs) -> Unit,
-    onFavoriteClicked: (id: String) -> Unit,
 ) {
     val gradientPairs = listOf(
         Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
@@ -88,10 +88,10 @@ private fun FavoriteScreen(
                             color = firstTabColor,
                             shape = MaterialTheme.shapes.small.copy(bottomEnd = ZeroCornerSize, topEnd = ZeroCornerSize),
                         )
-                        .padding(vertical = 8.dp)
                         .clickable {
                             onTabClicked(TO_LEARN)
-                        },
+                        }
+                        .padding(vertical = 8.dp),
                     text = stringResource(string.favorite_screen_to_learn),
                     color = MaterialTheme.colors.contentColorFor(firstTabColor),
                     style = MaterialTheme.typography.subtitle1,
@@ -104,10 +104,10 @@ private fun FavoriteScreen(
                             color = secondTabColor,
                             shape = MaterialTheme.shapes.small.copy(topStart = ZeroCornerSize, bottomStart = ZeroCornerSize),
                         )
-                        .padding(vertical = 8.dp)
                         .clickable {
                             onTabClicked(LEARNED)
-                        },
+                        }
+                        .padding(vertical = 8.dp),
                     text = stringResource(string.favorite_screen_learned),
                     color = MaterialTheme.colors.contentColorFor(secondTabColor),
                     style = MaterialTheme.typography.subtitle1,
@@ -133,7 +133,7 @@ private fun FavoriteScreen(
                                 Term("", "", "", "")
                             )
                         ),
-                        onFavoriteClicked = onFavoriteClicked,
+                        onClick = { openTrainingScreen() },
                         gradientPairs[0]
                     )
                 }
@@ -146,7 +146,7 @@ private fun FavoriteScreen(
 private fun HomeItem(
     modifier: Modifier,
     termSetWithTerms: TermSetWithTerms,
-    onFavoriteClicked: (id: String) -> Unit,
+    onClick: (id: String) -> Unit,
     colors: Pair<Color, Color>
 ) {
     Column(
@@ -171,7 +171,7 @@ private fun HomeItem(
                         .padding(top = 16.dp),
                 )
                 IconButton(
-                    onClick = { onFavoriteClicked(termSetWithTerms.termSet.id) },
+                    onClick = { onClick(termSetWithTerms.termSet.id) },
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(

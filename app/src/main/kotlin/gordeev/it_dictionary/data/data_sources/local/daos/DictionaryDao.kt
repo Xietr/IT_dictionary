@@ -12,6 +12,7 @@ import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSet
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsFavorite
+import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsLearned
 import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermWithRemoteData
 import kotlinx.coroutines.flow.Flow
 
@@ -55,4 +56,13 @@ interface DictionaryDao {
 
     @Update(entity = Term::class)
     suspend fun updateTermsAreFavorite(updateTermsAreFavorite: List<UpdateTermIsFavorite>)
+
+    @Update(entity = Term::class)
+    suspend fun updateTermIsLearned(updateTermIsLearned: UpdateTermIsLearned)
+
+    @Query("SELECT * FROM term WHERE isFavorite")
+    suspend fun getFavoriteTerms(): List<Term>
+
+    @Query("SELECT * FROM termSet WHERE id = :id")
+    suspend fun getTermSetById(id: String): TermSet
 }

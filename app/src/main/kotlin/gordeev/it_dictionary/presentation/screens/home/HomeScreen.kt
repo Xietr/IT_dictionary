@@ -91,20 +91,6 @@ private fun HomeScreen(
     onFavoriteClicked: (id: String) -> Unit = {},
     onSearchClicked: () -> Unit
 ) {
-    val gradientPairs = listOf(
-        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
-        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
-        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
-        Color(0xFF9C1EBC) to Color(0xFFFF7676), //pink
-        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
-        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
-        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
-        Color(0xFF9C1EBC) to Color(0xFFFF7676), //pink
-        Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
-        Color(0xFFD55C05) to Color(0xFFFABF26), //orange
-        Color(0xFFB0FF4B) to Color(0xFF11876B), //green
-        Color(0xFF9C1EBC) to Color(0xFFFF7676) //pink
-    )
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -196,7 +182,6 @@ private fun HomeItem(
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(
-                        //todo
                         painter = if (true) painterResource(id = R.drawable.favorite_filled) else painterResource(id = R.drawable.favorite_outlined),
                         contentDescription = null,
                     )

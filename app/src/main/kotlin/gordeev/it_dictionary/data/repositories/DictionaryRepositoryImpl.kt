@@ -38,7 +38,7 @@ class DictionaryRepositoryImpl @Inject constructor(
         ).flow.flowOn(Dispatchers.IO)
 
     override suspend fun toggleFavorite(termSetId: String) {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun sendRequestToAddTerm(name: String, meaning: String, termSetName: String): Flow<InvokeStatus> =
@@ -65,4 +65,21 @@ class DictionaryRepositoryImpl @Inject constructor(
             remoteMediator = DictionarySearchRemoteMediator(termNameQuery, dictionaryDao, dictionaryRemoteDataSource),
             pagingSourceFactory = { dictionaryDao.getDictionaryPagingSourceByTerm(termNameQuery) }
         ).flow.flowOn(Dispatchers.IO)
+
+    override fun getAllFavoriteTermSetsWithTerms(): Flow<List<TermSetWithTerms>> = flow {
+        val favoriteTermSetsIds = mutableSetOf<String>()
+        val favoriteTerms = dictionaryDao.getFavoriteTerms().also { terms ->
+            terms.map {
+                favoriteTermSetsIds.add(it.termSetId)
+            }
+        }
+        emit(
+            favoriteTermSetsIds.map { favoriteTermSetId ->
+                TermSetWithTerms(
+                    termSet = dictionaryDao.getTermSetById(favoriteTermSetId),
+                    terms = favoriteTerms.filter { it.termSetId == favoriteTermSetId }
+                )
+            }
+        )
+    }
 }

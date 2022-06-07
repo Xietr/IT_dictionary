@@ -25,39 +25,52 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import gordeev.it_dictionary.R.plurals
 import gordeev.it_dictionary.R.string
-import gordeev.it_dictionary.data.data_sources.local.entities.result.Term
-import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSet
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
-import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTabs.LEARNED
-import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTabs.TO_LEARN
+import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTab.LEARNED
+import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTab.TO_LEARN
+import gordeev.it_dictionary.presentation.utils.rememberStateWithLifecycle
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
 import gordeev.it_dictionary.presentation.utils.stringQuantityResource
 
 @Composable
 fun FavoriteScreen(
-    openTrainingScreen: () -> Unit
+    openTrainingScreen: (TermSetWithTerms) -> Unit,
 ) {
+    FavoriteScreen(openTrainingScreen, hiltViewModel())
+}
+
+@Composable
+private fun FavoriteScreen(
+    openTrainingScreen: (TermSetWithTerms) -> Unit,
+    viewModel: FavoriteViewModel
+) {
+    val state by rememberStateWithLifecycle(viewModel.state)
     FavoriteScreen(
-        openTrainingScreen = openTrainingScreen,
-        currentTab = TO_LEARN,
-        onTabClicked = {},
+        state = state,
+        openTrainingScreen = {
+            viewModel.onOpenTrainingScreen(it)
+            openTrainingScreen(it)
+        },
+        onTabClicked = viewModel::changeTab,
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FavoriteScreen(
-    openTrainingScreen: () -> Unit,
-    currentTab: FavoriteScreenTabs,
-    onTabClicked: (FavoriteScreenTabs) -> Unit,
+    state: FavoriteScreenState,
+    openTrainingScreen: (TermSetWithTerms) -> Unit,
+    onTabClicked: (FavoriteScreenTab) -> Unit,
 ) {
     val gradientPairs = listOf(
         Color(0xFFCB5DFF) to Color(0xFF1D41BE), //purple
@@ -79,8 +92,8 @@ private fun FavoriteScreen(
             Row(modifier = Modifier.padding(bottom = 24.dp)) {
                 val activeTabColor = MaterialTheme.colors.primary
                 val unActiveTabColor = MaterialTheme.colors.secondary
-                val firstTabColor = if (currentTab == TO_LEARN) activeTabColor else unActiveTabColor
-                val secondTabColor = if (currentTab == LEARNED) activeTabColor else unActiveTabColor
+                val firstTabColor = if (state.tab == TO_LEARN) activeTabColor else unActiveTabColor
+                val secondTabColor = if (state.tab == LEARNED) activeTabColor else unActiveTabColor
                 Text(
                     modifier = Modifier
                         .weight(1f)
@@ -120,22 +133,15 @@ private fun FavoriteScreen(
                 contentPadding = paddingValues,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                item {
-                    HomeItem(
-                        modifier = Modifier,
-                        termSetWithTerms = TermSetWithTerms(
-                            TermSet("", "Андроид разработка", ""),
-                            terms = listOf(
-                                Term("", "", "", ""),
-                                Term("", "", "", ""),
-                                Term("", "", "", ""),
-                                Term("", "", "", ""),
-                                Term("", "", "", "")
-                            )
-                        ),
-                        onClick = { openTrainingScreen() },
-                        gradientPairs[0]
-                    )
+                state.termSetsWithTerms.forEach {
+                    item {
+                        HomeItem(
+                            modifier = Modifier,
+                            termSetWithTerms = it,
+                            onClick = { openTrainingScreen(it) },
+                            gradientPairs[0]
+                        )
+                    }
                 }
             }
         }
@@ -146,7 +152,7 @@ private fun FavoriteScreen(
 private fun HomeItem(
     modifier: Modifier,
     termSetWithTerms: TermSetWithTerms,
-    onClick: (id: String) -> Unit,
+    onClick: () -> Unit,
     colors: Pair<Color, Color>
 ) {
     Column(
@@ -171,7 +177,7 @@ private fun HomeItem(
                         .padding(top = 16.dp),
                 )
                 IconButton(
-                    onClick = { onClick(termSetWithTerms.termSet.id) },
+                    onClick = onClick,
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(

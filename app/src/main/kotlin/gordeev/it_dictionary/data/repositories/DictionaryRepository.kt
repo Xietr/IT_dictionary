@@ -21,4 +21,6 @@ interface DictionaryRepository {
 
     @Throws(Exception::class)
     fun termSetWithTermsPagingSourceByTermName(pagingConfig: PagingConfig, termNameQuery: String): Flow<PagingData<TermSetWithTerm>>
+
+    fun getAllFavoriteTermSetsWithTerms(): Flow<List<TermSetWithTerms>>
 }

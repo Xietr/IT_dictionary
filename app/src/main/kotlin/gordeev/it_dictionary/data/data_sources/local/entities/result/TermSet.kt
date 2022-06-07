@@ -6,10 +6,10 @@ import gordeev.it_dictionary.data.data_sources.remote.entities.responses.RemoteT
 
 @Entity
 data class TermSet(
-    @PrimaryKey override val id: String,
+    @PrimaryKey val id: String,
     val name: String,
     val description: String,
-) : PaginatedEntity {
+) {
     companion object {
         fun RemoteTermSet.fromRemoteTermSet() = TermSet(id, name, description)
     }

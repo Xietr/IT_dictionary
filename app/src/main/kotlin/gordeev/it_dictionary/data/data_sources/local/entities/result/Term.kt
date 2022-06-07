@@ -12,5 +12,6 @@ data class Term(
     val termSetId: String,
     val termName: String,
     val meaning: String,
-    @ColumnInfo(defaultValue = "false") val isFavorite: Boolean = false
+    @ColumnInfo(defaultValue = "'false'") val isFavorite: Boolean = false,
+    @ColumnInfo(defaultValue = "'false'") val isLearned: Boolean = false
 )

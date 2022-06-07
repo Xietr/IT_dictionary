@@ -20,20 +20,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import gordeev.it_dictionary.R
 import gordeev.it_dictionary.presentation.ui.TextButton
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Secondary
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
 
-@Preview
 @Composable
-fun TrainingScreen() {
-    val title = "JDK"
-    val meaning =
-        "Java Development Kit — бесплатно распространяемый компанией Oracle Corporation комплект разработчика приложений на языке Java, включающий в себя компилятор Java, стандартные библиотеки классов Java, примеры, документацию, различные утилиты и исполнительную систему Java."
+fun TrainingScreen(returnToFavoriteScreen: () -> Unit, openTrainingScreen: (Int) -> Unit) {
+    TrainingScreen(
+        viewModel = hiltViewModel(/*(LocalContext.current as ComponentActivity)*/),
+        returnToFavoriteScreen = returnToFavoriteScreen,
+        openTrainingScreen = openTrainingScreen
+    )
+}
+
+@Composable
+private fun TrainingScreen(viewModel: TrainingViewModel, returnToFavoriteScreen: () -> Unit, openTrainingScreen: (Int) -> Unit) {
+    val state = TrainingScreenState(page = viewModel.termSetId)
+    TrainingScreen(
+        returnToFavoriteScreen = returnToFavoriteScreen,
+        onTermRememberClicked = {
+            viewModel //todo
+            //            if (state.page == state.totalPages) {
+            //                returnToFavoriteScreen()
+            //            } else {
+            openTrainingScreen(state.page + 1)
+            //            }
+        },
+        viewState = state
+    )
+}
+
+@Composable
+private fun TrainingScreen(
+    returnToFavoriteScreen: () -> Unit,
+    onTermRememberClicked: (remembered: Boolean) -> Unit,
+    viewState: TrainingScreenState
+) {
 
     val scrollState = rememberScrollState(0)
     Scaffold { paddingValues ->
@@ -51,7 +77,7 @@ fun TrainingScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { returnToFavoriteScreen() },
                     modifier = Modifier.padding(start = 4.dp)
                 ) {
                     Icon(
@@ -59,7 +85,7 @@ fun TrainingScreen() {
                         contentDescription = stringResource(id = R.string.training_screen_back_icon_description)
                     )
                 }
-                Text(text = "1/16") //todo
+                Text(text = "${viewState.page}/${viewState.totalPages}")
             }
             Column(
                 modifier = Modifier
@@ -69,12 +95,12 @@ fun TrainingScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = title,
+                    text = viewState.title,
                     modifier = Modifier.padding(horizontal = screenEdgeOffsetHorizontal),
                     style = MaterialTheme.typography.h4
                 )
                 Text(
-                    text = meaning,
+                    text = viewState.meaning,
                     modifier = Modifier.padding(horizontal = screenEdgeOffsetHorizontal),
                     style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Normal),
                 )
@@ -86,13 +112,13 @@ fun TrainingScreen() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onTermRememberClicked(true) },
                     modifier = Modifier.weight(1f),
                     colors = Secondary,
                     textRes = R.string.training_screen_memorized_button
                 )
                 TextButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onTermRememberClicked(false) },
                     modifier = Modifier.weight(1f),
                     colors = Primary,
                     textRes = R.string.training_screen_repeat_button

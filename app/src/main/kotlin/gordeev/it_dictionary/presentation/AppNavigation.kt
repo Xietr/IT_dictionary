@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,6 +23,7 @@ import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
 import gordeev.it_dictionary.presentation.screens.term_search.TermSearchScreen
 import gordeev.it_dictionary.presentation.screens.term_set_partial_add.TermSetPartialAddScreen
 import gordeev.it_dictionary.presentation.screens.training.TrainingScreen
+import gordeev.it_dictionary.presentation.screens.training.TrainingViewModel
 
 internal sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -30,6 +32,7 @@ internal sealed class Screen(val route: String) {
 }
 
 const val termSetPartialAddArg = "termSetPartialAdd"
+const val trainingArg = "training"
 
 private sealed class LeafScreen(
     private val route: String,
@@ -39,7 +42,11 @@ private sealed class LeafScreen(
     object Home : LeafScreen("home")
     object Suggest : LeafScreen("suggest")
     object Favorite : LeafScreen("favorite")
-    object Training : LeafScreen("training")
+    object Training : LeafScreen("training/{$trainingArg}") {
+        fun createRoute(root: Screen, page: Int): String {
+            return "${root.route}/training/$page"
+        }
+    }
 
     object Search : LeafScreen("search")
 
@@ -63,7 +70,7 @@ internal fun AppNavigation(
         modifier = modifier,
     ) {
         addHomeTopLevel(navController)
-        addSuggestingTopLevel(navController)
+        addSuggestingTopLevel()
         addFavoriteTopLevel(navController)
     }
 }
@@ -81,9 +88,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
     }
 }
 
-private fun NavGraphBuilder.addSuggestingTopLevel(
-    navController: NavController
-) {
+private fun NavGraphBuilder.addSuggestingTopLevel() {
     navigation(
         route = Screen.Suggest.route,
         startDestination = LeafScreen.Suggest.createRoute(Screen.Suggest),
@@ -100,7 +105,7 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
         startDestination = LeafScreen.Favorite.createRoute(Screen.Favorite),
     ) {
         addFavoriteScreen(Screen.Favorite, navController)
-        addTrainingScreen(Screen.Favorite)
+        addTrainingScreen(Screen.Favorite, navController)
     }
 }
 
@@ -157,23 +162,35 @@ private fun NavGraphBuilder.addSuggestScreen(
 
 private fun NavGraphBuilder.addFavoriteScreen(
     root: Screen,
-    navController: NavController,
+    navController: NavController
 ) {
     composable(
         route = LeafScreen.Favorite.createRoute(root)
     ) {
         FavoriteScreen(
-            openTrainingScreen = { navController.navigate(LeafScreen.Training.createRoute(root)) }
+            openTrainingScreen = { navController.navigate(LeafScreen.Training.createRoute(root, 1)) }
         )
     }
 }
 
 private fun NavGraphBuilder.addTrainingScreen(
     root: Screen,
+    navController: NavController
 ) {
     composable(
-        route = LeafScreen.Training.createRoute(root)
+        route = LeafScreen.Training.createRoute(root),
+        arguments = listOf(
+            navArgument(trainingArg) { type = NavType.IntType }
+        ),
     ) {
-        TrainingScreen()
+        val viewModel: TrainingViewModel = hiltViewModel()
+        TrainingScreen(
+            returnToFavoriteScreen = {
+                navController.popBackStack(route = Screen.Favorite.route, inclusive = true)
+            },
+            openTrainingScreen = {
+                navController.navigate(LeafScreen.Training.createRoute(root, it))
+            }
+        )
     }
 }

@@ -1,18 +1,9 @@
 package gordeev.it_dictionary.presentation.screens.training
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -29,26 +20,33 @@ import gordeev.it_dictionary.presentation.ui.TextButtonColors.Secondary
 import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
 
 @Composable
-fun TrainingScreen(returnToFavoriteScreen: () -> Unit, openTrainingScreen: (Int) -> Unit) {
+fun TrainingScreen(
+    returnToFavoriteScreen: () -> Unit,
+    openTrainingScreen: (pageIndex: Int) -> Unit
+) {
     TrainingScreen(
-        viewModel = hiltViewModel(/*(LocalContext.current as ComponentActivity)*/),
+        viewModel = hiltViewModel(),
         returnToFavoriteScreen = returnToFavoriteScreen,
         openTrainingScreen = openTrainingScreen
     )
 }
 
 @Composable
-private fun TrainingScreen(viewModel: TrainingViewModel, returnToFavoriteScreen: () -> Unit, openTrainingScreen: (Int) -> Unit) {
-    val state = TrainingScreenState(page = viewModel.termSetId)
+private fun TrainingScreen(
+    viewModel: TrainingViewModel,
+    returnToFavoriteScreen: () -> Unit,
+    openTrainingScreen: (pageIndex: Int) -> Unit
+) {
+    val state = viewModel.state
     TrainingScreen(
         returnToFavoriteScreen = returnToFavoriteScreen,
         onTermRememberClicked = {
-            viewModel //todo
-            //            if (state.page == state.totalPages) {
-            //                returnToFavoriteScreen()
-            //            } else {
-            openTrainingScreen(state.page + 1)
-            //            }
+            viewModel.setTermIsLearned(it)
+            if (state.page == state.totalPages) {
+                returnToFavoriteScreen()
+            } else {
+                openTrainingScreen(state.page)
+            }
         },
         viewState = state
     )

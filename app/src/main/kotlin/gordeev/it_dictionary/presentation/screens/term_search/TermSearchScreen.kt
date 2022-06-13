@@ -1,10 +1,6 @@
 package gordeev.it_dictionary.presentation.screens.term_search
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
@@ -28,11 +24,7 @@ import gordeev.it_dictionary.presentation.theme.checkboxColors
 import gordeev.it_dictionary.presentation.ui.SearchTextField
 import gordeev.it_dictionary.presentation.ui.TextButton
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
-import gordeev.it_dictionary.presentation.utils.drawUnderline
-import gordeev.it_dictionary.presentation.utils.rememberFlowWithLifecycle
-import gordeev.it_dictionary.presentation.utils.rememberStateWithLifecycle
-import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
-import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetVertical
+import gordeev.it_dictionary.presentation.utils.*
 
 @Composable
 fun TermSearchScreen() {
@@ -44,7 +36,8 @@ private fun TermSearchScreen(
     viewModel: TermSearchViewModel
 ) {
     val state = rememberStateWithLifecycle(stateFlow = viewModel.state).value
-    val pagingItems = rememberFlowWithLifecycle(viewModel.pagingTermSetWithTermFlow).collectAsLazyPagingItems()
+    val pagingItems =
+        rememberFlowWithLifecycle(viewModel.pagingTermSetWithTermFlow).collectAsLazyPagingItems()
     TermSearchScreen(
         state,
         pagingItems,
@@ -70,7 +63,11 @@ private fun TermSearchScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = screenEdgeOffsetHorizontal, top = screenEdgeOffsetVertical, end = screenEdgeOffsetHorizontal)
+            .padding(
+                start = screenEdgeOffsetHorizontal,
+                top = screenEdgeOffsetVertical,
+                end = screenEdgeOffsetHorizontal
+            )
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             SearchTextField(
@@ -120,10 +117,18 @@ private fun AddTermSearchResult(
             .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(checked = termSetWithTerm.term.isFavorite, onCheckedChange = onCheckedChange, colors = checkboxColors)
+        Checkbox(
+            checked = termSetWithTerm.term.isFavorite,
+            onCheckedChange = onCheckedChange,
+            colors = checkboxColors
+        )
         Column {
             Text(text = termSetWithTerm.term.termName, style = MaterialTheme.typography.button)
-            Text(text = termSetWithTerm.termSet.name, style = MaterialTheme.typography.subtitle1, color = Text20)
+            Text(
+                text = termSetWithTerm.termSet.name,
+                style = MaterialTheme.typography.subtitle1,
+                color = Text20
+            )
         }
     }
 }

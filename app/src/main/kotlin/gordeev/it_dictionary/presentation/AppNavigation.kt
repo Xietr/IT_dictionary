@@ -8,12 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+import androidx.navigation.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
@@ -23,7 +18,6 @@ import gordeev.it_dictionary.presentation.screens.suggest.SuggestScreen
 import gordeev.it_dictionary.presentation.screens.term_search.TermSearchScreen
 import gordeev.it_dictionary.presentation.screens.term_set_partial_add.TermSetPartialAddScreen
 import gordeev.it_dictionary.presentation.screens.training.TrainingScreen
-import gordeev.it_dictionary.presentation.screens.training.TrainingViewModel
 
 internal sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -37,7 +31,7 @@ const val trainingArg = "training"
 private sealed class LeafScreen(
     private val route: String,
 ) {
-    fun createRoute(root: Screen) = "${root.route}/$route"
+    fun getRoute(root: Screen) = "${root.route}/$route"
 
     object Home : LeafScreen("home")
     object Suggest : LeafScreen("suggest")
@@ -80,7 +74,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
 ) {
     navigation(
         route = Screen.Home.route,
-        startDestination = LeafScreen.Home.createRoute(Screen.Home),
+        startDestination = LeafScreen.Home.getRoute(Screen.Home),
     ) {
         addHomeScreen(navController, Screen.Home)
         addTermSearchScreen(Screen.Home)
@@ -91,7 +85,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
 private fun NavGraphBuilder.addSuggestingTopLevel() {
     navigation(
         route = Screen.Suggest.route,
-        startDestination = LeafScreen.Suggest.createRoute(Screen.Suggest),
+        startDestination = LeafScreen.Suggest.getRoute(Screen.Suggest),
     ) {
         addSuggestScreen(Screen.Suggest)
     }
@@ -102,7 +96,7 @@ private fun NavGraphBuilder.addFavoriteTopLevel(
 ) {
     navigation(
         route = Screen.Favorite.route,
-        startDestination = LeafScreen.Favorite.createRoute(Screen.Favorite),
+        startDestination = LeafScreen.Favorite.getRoute(Screen.Favorite),
     ) {
         addFavoriteScreen(Screen.Favorite, navController)
         addTrainingScreen(Screen.Favorite, navController)
@@ -114,14 +108,14 @@ private fun NavGraphBuilder.addHomeScreen(
     root: Screen,
 ) {
     composable(
-        route = LeafScreen.Home.createRoute(root)
+        route = LeafScreen.Home.getRoute(root)
     ) {
         HomeScreen(
             openPartialAddFromSet = {
                 navController.navigate(LeafScreen.TermSetPartialAddToFavorite.createRoute(root, it))
             },
             openSearchScreen = {
-                navController.navigate(LeafScreen.Search.createRoute(root))
+                navController.navigate(LeafScreen.Search.getRoute(root))
             }
         )
     }
@@ -131,7 +125,7 @@ private fun NavGraphBuilder.addTermSearchScreen(
     root: Screen
 ) {
     composable(
-        route = LeafScreen.Search.createRoute(root)
+        route = LeafScreen.Search.getRoute(root)
     ) {
         TermSearchScreen()
     }
@@ -141,7 +135,7 @@ private fun NavGraphBuilder.addTermsFromSetToFavorite(
     root: Screen,
 ) {
     composable(
-        route = LeafScreen.TermSetPartialAddToFavorite.createRoute(root),
+        route = LeafScreen.TermSetPartialAddToFavorite.getRoute(root),
         arguments = listOf(
             navArgument(termSetPartialAddArg) { type = NavType.StringType }
         ),
@@ -154,7 +148,7 @@ private fun NavGraphBuilder.addSuggestScreen(
     root: Screen,
 ) {
     composable(
-        route = LeafScreen.Suggest.createRoute(root)
+        route = LeafScreen.Suggest.getRoute(root)
     ) {
         SuggestScreen()
     }
@@ -165,10 +159,17 @@ private fun NavGraphBuilder.addFavoriteScreen(
     navController: NavController
 ) {
     composable(
-        route = LeafScreen.Favorite.createRoute(root)
+        route = LeafScreen.Favorite.getRoute(root)
     ) {
         FavoriteScreen(
-            openTrainingScreen = { navController.navigate(LeafScreen.Training.createRoute(root, 1)) }
+            openTrainingScreen = {
+                navController.navigate(
+                    LeafScreen.Training.createRoute(
+                        root,
+                        0
+                    )
+                )
+            }
         )
     }
 }
@@ -178,15 +179,17 @@ private fun NavGraphBuilder.addTrainingScreen(
     navController: NavController
 ) {
     composable(
-        route = LeafScreen.Training.createRoute(root),
+        route = LeafScreen.Training.getRoute(root),
         arguments = listOf(
             navArgument(trainingArg) { type = NavType.IntType }
         ),
     ) {
-        val viewModel: TrainingViewModel = hiltViewModel()
         TrainingScreen(
             returnToFavoriteScreen = {
-                navController.popBackStack(route = Screen.Favorite.route, inclusive = true)
+                navController.popBackStack(
+                    route = LeafScreen.Favorite.getRoute(Screen.Favorite),
+                    inclusive = false
+                )
             },
             openTrainingScreen = {
                 navController.navigate(LeafScreen.Training.createRoute(root, it))

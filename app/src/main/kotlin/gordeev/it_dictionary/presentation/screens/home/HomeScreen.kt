@@ -3,13 +3,7 @@ package gordeev.it_dictionary.presentation.screens.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +13,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -94,7 +83,11 @@ private fun HomeScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = screenEdgeOffsetHorizontal, top = screenEdgeOffsetVertical, end = screenEdgeOffsetHorizontal)
+            .padding(
+                start = screenEdgeOffsetHorizontal,
+                top = screenEdgeOffsetVertical,
+                end = screenEdgeOffsetHorizontal
+            )
     ) { paddingValues ->
         if (dialogVisible) {
             HomeScreenDialog(
@@ -139,7 +132,6 @@ private fun HomeScreen(
                                 HomeItem(
                                     termSetWithTerms = it,
                                     onFavoriteClicked = onFavoriteClicked,
-                                    gradientPairs[index]
                                 )
                             }
                         }
@@ -154,7 +146,7 @@ private fun HomeScreen(
 private fun HomeItem(
     termSetWithTerms: TermSetWithTerms,
     onFavoriteClicked: (id: String) -> Unit,
-    color: Pair<Color, Color>
+    color: Pair<Color, Color> = Color.Blue to Color.Green
 ) {
     Column(
         modifier = Modifier
@@ -182,7 +174,9 @@ private fun HomeItem(
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(
-                        painter = if (true) painterResource(id = R.drawable.favorite_filled) else painterResource(id = R.drawable.favorite_outlined),
+                        painter = if (true) painterResource(id = R.drawable.favorite_filled) else painterResource(
+                            id = R.drawable.favorite_outlined
+                        ),
                         contentDescription = null,
                     )
                 }

@@ -11,16 +11,23 @@ interface DictionaryRepository {
 
     fun termSetWithTermsPagingSource(pagingConfig: PagingConfig): Flow<PagingData<TermSetWithTerms>>
 
-    suspend fun toggleFavorite(termSetId: String)
-
     fun sendRequestToAddTerm(name: String, meaning: String, termSetName: String): Flow<InvokeStatus>
 
     fun observableTermSetsByName(name: String): Flow<List<String>>
 
+    fun observableTermSetById(id: String): Flow<TermSetWithTerms>
+
     suspend fun setTermIsFavorite(termId: String, isFavorite: Boolean)
 
+    suspend fun setTermsAreFavorite(termIdToIsFavorite: Map<String, Boolean>)
+
+    suspend fun setTermIsLearned(termId: String, isLearned: Boolean)
+
     @Throws(Exception::class)
-    fun termSetWithTermsPagingSourceByTermName(pagingConfig: PagingConfig, termNameQuery: String): Flow<PagingData<TermSetWithTerm>>
+    fun termSetWithTermsPagingSourceByTermName(
+        pagingConfig: PagingConfig,
+        termNameQuery: String
+    ): Flow<PagingData<TermSetWithTerm>>
 
     fun getAllFavoriteTermSetsWithTerms(): Flow<List<TermSetWithTerms>>
 }

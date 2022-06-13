@@ -16,7 +16,8 @@ class HomeViewModel @Inject constructor(
     dictionaryRepository: DictionaryRepository
 ) : ViewModel() {
 
-    val pagedList: Flow<PagingData<TermSetWithTerms>> = dictionaryRepository.termSetWithTermsPagingSource(PAGING_CONFIG).cachedIn(viewModelScope)
+    val pagedList: Flow<PagingData<TermSetWithTerms>> =
+        dictionaryRepository.termSetWithTermsPagingSource(PAGING_CONFIG).cachedIn(viewModelScope)
 
     fun addTermSetToFavorite(id: String) {
     }

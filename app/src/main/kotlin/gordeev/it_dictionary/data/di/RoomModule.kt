@@ -19,7 +19,8 @@ object RoomDatabaseModule {
     fun provideDatabase(
         @ApplicationContext context: Context
     ): DictionaryRoomDatabase {
-        val builder = Room.databaseBuilder(context, DictionaryRoomDatabase::class.java, "dictionary.db")
+        val builder =
+            Room.databaseBuilder(context, DictionaryRoomDatabase::class.java, "dictionary.db")
         if (Debug.isDebuggerConnected()) {
             builder.allowMainThreadQueries()
         }

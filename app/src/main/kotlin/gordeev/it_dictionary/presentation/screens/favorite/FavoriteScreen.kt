@@ -3,24 +3,12 @@ package gordeev.it_dictionary.presentation.screens.favorite
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells.Fixed
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
@@ -44,14 +32,14 @@ import gordeev.it_dictionary.presentation.utils.stringQuantityResource
 
 @Composable
 fun FavoriteScreen(
-    openTrainingScreen: (TermSetWithTerms) -> Unit,
+    openTrainingScreen: () -> Unit,
 ) {
     FavoriteScreen(openTrainingScreen, hiltViewModel())
 }
 
 @Composable
 private fun FavoriteScreen(
-    openTrainingScreen: (TermSetWithTerms) -> Unit,
+    openTrainingScreen: () -> Unit,
     viewModel: FavoriteViewModel
 ) {
     val state by rememberStateWithLifecycle(viewModel.state)
@@ -59,7 +47,7 @@ private fun FavoriteScreen(
         state = state,
         openTrainingScreen = {
             viewModel.onOpenTrainingScreen(it)
-            openTrainingScreen(it)
+            openTrainingScreen()
         },
         onTabClicked = viewModel::changeTab,
     )
@@ -81,7 +69,11 @@ private fun FavoriteScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = screenEdgeOffsetHorizontal, top = 24.dp, end = screenEdgeOffsetHorizontal)
+            .padding(
+                start = screenEdgeOffsetHorizontal,
+                top = 24.dp,
+                end = screenEdgeOffsetHorizontal
+            )
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Text(
@@ -99,7 +91,10 @@ private fun FavoriteScreen(
                         .weight(1f)
                         .background(
                             color = firstTabColor,
-                            shape = MaterialTheme.shapes.small.copy(bottomEnd = ZeroCornerSize, topEnd = ZeroCornerSize),
+                            shape = MaterialTheme.shapes.small.copy(
+                                bottomEnd = ZeroCornerSize,
+                                topEnd = ZeroCornerSize
+                            ),
                         )
                         .clickable {
                             onTabClicked(TO_LEARN)
@@ -115,7 +110,10 @@ private fun FavoriteScreen(
                         .weight(1f)
                         .background(
                             color = secondTabColor,
-                            shape = MaterialTheme.shapes.small.copy(topStart = ZeroCornerSize, bottomStart = ZeroCornerSize),
+                            shape = MaterialTheme.shapes.small.copy(
+                                topStart = ZeroCornerSize,
+                                bottomStart = ZeroCornerSize
+                            ),
                         )
                         .clickable {
                             onTabClicked(LEARNED)
@@ -181,7 +179,6 @@ private fun HomeItem(
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(
-                        //todo
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = null,
                     )

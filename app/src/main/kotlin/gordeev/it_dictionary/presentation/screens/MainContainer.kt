@@ -7,12 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Outlined
 import androidx.compose.material.icons.filled.DriveFileRenameOutline
@@ -21,13 +16,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -66,8 +55,12 @@ fun MainContainer() {
                         launchSingleTop = true
                         restoreState = true
 
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        if (navController.currentDestination?.route?.contains(selected.route) == true) {
+                            popUpTo("${selected.route}/${selected.route}")
+                        } else {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
                         }
                     }
                 },

@@ -10,6 +10,7 @@ import gordeev.it_dictionary.data.data_sources.local.daos.DictionaryDao
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsFavorite
+import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsLearned
 import gordeev.it_dictionary.data.data_sources.remote.DictionaryRemoteDataSource
 import gordeev.it_dictionary.data.data_sources.remote.entities.requests.RequestToAddTerm
 import gordeev.it_dictionary.data.data_sources.utils.InvokeStatus
@@ -37,15 +38,24 @@ class DictionaryRepositoryImpl @Inject constructor(
             pagingSourceFactory = { dictionaryDao.getDictionaryPagingSource() }
         ).flow.flowOn(Dispatchers.IO)
 
-    override suspend fun toggleFavorite(termSetId: String) {
-        TODO()
-    }
-
-    override fun sendRequestToAddTerm(name: String, meaning: String, termSetName: String): Flow<InvokeStatus> =
-        dictionaryRemoteDataSource.sendRequestToAddTerm(RequestToAddTerm(name, meaning, termSetName))
+    override fun sendRequestToAddTerm(
+        name: String,
+        meaning: String,
+        termSetName: String
+    ): Flow<InvokeStatus> =
+        dictionaryRemoteDataSource.sendRequestToAddTerm(
+            RequestToAddTerm(
+                name,
+                meaning,
+                termSetName
+            )
+        )
 
     @OptIn(DelicateCoroutinesApi::class)
-    val allTermSets = GlobalScope.async(Dispatchers.IO, start = LAZY) { dictionaryRemoteDataSource.getAllTermSetsName() }
+    val allTermSets = GlobalScope.async(
+        Dispatchers.IO,
+        start = LAZY
+    ) { dictionaryRemoteDataSource.getAllTermSetsName() }
 
     override fun observableTermSetsByName(name: String): Flow<List<String>> =
         flow {
@@ -54,15 +64,38 @@ class DictionaryRepositoryImpl @Inject constructor(
             )
         }
 
+    override fun observableTermSetById(id: String): Flow<TermSetWithTerms> =
+        dictionaryDao.getTermSetObservableById(id)
+
     override suspend fun setTermIsFavorite(termId: String, isFavorite: Boolean) {
         dictionaryDao.updateTermIsFavorite(UpdateTermIsFavorite(termId, isFavorite))
     }
 
+    override suspend fun setTermsAreFavorite(termIdToIsFavorite: Map<String, Boolean>) {
+        dictionaryDao.updateTermsAreFavorite(termIdToIsFavorite.map {
+            UpdateTermIsFavorite(
+                it.key,
+                it.value
+            )
+        })
+    }
+
+    override suspend fun setTermIsLearned(termId: String, isLearned: Boolean) {
+        dictionaryDao.updateTermIsLearned(UpdateTermIsLearned(termId, isLearned))
+    }
+
     @Throws(Exception::class)
-    override fun termSetWithTermsPagingSourceByTermName(pagingConfig: PagingConfig, termNameQuery: String): Flow<PagingData<TermSetWithTerm>> =
+    override fun termSetWithTermsPagingSourceByTermName(
+        pagingConfig: PagingConfig,
+        termNameQuery: String
+    ): Flow<PagingData<TermSetWithTerm>> =
         Pager(
             config = pagingConfig,
-            remoteMediator = DictionarySearchRemoteMediator(termNameQuery, dictionaryDao, dictionaryRemoteDataSource),
+            remoteMediator = DictionarySearchRemoteMediator(
+                termNameQuery,
+                dictionaryDao,
+                dictionaryRemoteDataSource
+            ),
             pagingSourceFactory = { dictionaryDao.getDictionaryPagingSourceByTerm(termNameQuery) }
         ).flow.flowOn(Dispatchers.IO)
 

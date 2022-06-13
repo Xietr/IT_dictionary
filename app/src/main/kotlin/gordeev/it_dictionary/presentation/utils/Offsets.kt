@@ -7,4 +7,5 @@ import androidx.compose.ui.unit.dp
 val screenEdgeOffsetHorizontal = 16.dp
 val screenEdgeOffsetVertical = 16.dp
 
-fun Modifier.screenEdgeOffsetPaddings() = padding(horizontal = screenEdgeOffsetHorizontal, vertical = screenEdgeOffsetVertical)
+fun Modifier.screenEdgeOffsetPaddings() =
+    padding(horizontal = screenEdgeOffsetHorizontal, vertical = screenEdgeOffsetVertical)

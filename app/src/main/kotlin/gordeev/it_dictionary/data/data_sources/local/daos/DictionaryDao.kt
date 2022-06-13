@@ -1,12 +1,7 @@
 package gordeev.it_dictionary.data.data_sources.local.daos
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.*
 import gordeev.it_dictionary.data.data_sources.local.entities.result.Term
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSet
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
@@ -49,7 +44,7 @@ interface DictionaryDao {
 
     @Transaction
     @Query("SELECT * FROM termSet WHERE id = :id")
-    fun getTermSetObservableById(id: String): Flow<TermSetWithTerms?>
+    fun getTermSetObservableById(id: String): Flow<TermSetWithTerms>
 
     @Update(entity = Term::class)
     suspend fun updateTermIsFavorite(updateTermIsFavorite: UpdateTermIsFavorite)

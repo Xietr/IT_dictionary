@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
-import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTab.LEARNED
 import gordeev.it_dictionary.presentation.screens.favorite.FavoriteScreenTab.TO_LEARN
 import gordeev.it_dictionary.presentation.screens.training.CurrentTrainingTermSetWithTerms
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,15 +26,16 @@ class FavoriteViewModel @Inject constructor(
     val state = combine(currentTab, favoriteTermSetsWithTerms) { tab, termSetsWithTerms ->
         FavoriteScreenState(
             tab,
-            if (tab == LEARNED) {
-                termSetsWithTerms.apply {
-                    this.map {
-                        it.copy(
-                            terms = it.terms.filter { term -> term.isLearned }
-                        )
-                    }
-                }.filter { it.terms.isNotEmpty() }
-            } else termSetsWithTerms
+            termSetsWithTerms.run {
+                this.map {
+                    it.copy(
+                        terms = it.terms.filter { term ->
+                            if (tab == FavoriteScreenTab.LEARNED) term.isLearned
+                            else term.isLearned.not()
+                        }
+                    )
+                }
+            }.filter { it.terms.isNotEmpty() }
         )
     }.stateIn(
         scope = viewModelScope,

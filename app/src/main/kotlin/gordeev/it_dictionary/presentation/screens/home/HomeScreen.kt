@@ -13,7 +13,9 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,10 +32,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import gordeev.it_dictionary.R
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.presentation.ui.SearchTextField
-import gordeev.it_dictionary.presentation.utils.rememberFlowWithLifecycle
-import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetHorizontal
-import gordeev.it_dictionary.presentation.utils.screenEdgeOffsetVertical
-import gordeev.it_dictionary.presentation.utils.stringQuantityResource
+import gordeev.it_dictionary.presentation.utils.*
 
 @Composable
 fun HomeScreen(
@@ -46,23 +45,22 @@ fun HomeScreen(
 @Composable
 private fun HomeScreen(
     viewModel: HomeViewModel,
-    onChooseWordsClicked: (termSetId: String) -> Unit = {},
+    openPartialAddFromSet: (termSetId: String) -> Unit = {},
     openSearchScreen: () -> Unit
 ) {
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
-
-    var termSetIdToAdd by remember { mutableStateOf<String?>(null) }
-    val dialogVisible by remember(termSetIdToAdd) { mutableStateOf(termSetIdToAdd != null) }
+    val selectedTermSetId by rememberStateWithLifecycle(viewModel.selectedTermSetId)
 
     HomeScreen(
         list = pagingItems,
         isLoading = pagingItems.loadState.run { refresh == LoadState.Loading || append == LoadState.Loading },
-        dialogVisible = dialogVisible,
+        dialogVisible = selectedTermSetId != null,
         onRefresh = { pagingItems.refresh() },
-        onDismissRequest = { termSetIdToAdd = null },
-        onChooseWordsClicked = { onChooseWordsClicked(termSetIdToAdd!!) },
-        onChooseAllWordsClicked = { viewModel.addTermSetToFavorite(termSetIdToAdd!!) },
-        onFavoriteClicked = { termSetIdToAdd = it },
+        onDismissRequest = { viewModel.onCloseDialog() },
+        onChooseWordsClicked = { openPartialAddFromSet(selectedTermSetId!!) },
+        onChooseAllWordsClicked = { viewModel.addTermSetToFavorite() },
+        onFavoriteClick = { viewModel.onOpenDialog(it) },
+        onTermSetClick = { openPartialAddFromSet(it.termSet.id) },
         onSearchClicked = openSearchScreen
     )
 }
@@ -72,12 +70,13 @@ private fun HomeScreen(
 private fun HomeScreen(
     isLoading: Boolean,
     list: LazyPagingItems<TermSetWithTerms>,
-    dialogVisible: Boolean = false,
-    onRefresh: () -> Unit = {},
-    onDismissRequest: () -> Unit = {},
-    onChooseWordsClicked: () -> Unit = {},
-    onChooseAllWordsClicked: () -> Unit = {},
-    onFavoriteClicked: (id: String) -> Unit = {},
+    dialogVisible: Boolean,
+    onRefresh: () -> Unit,
+    onDismissRequest: () -> Unit,
+    onChooseWordsClicked: () -> Unit,
+    onChooseAllWordsClicked: () -> Unit,
+    onFavoriteClick: (TermSetWithTerms) -> Unit,
+    onTermSetClick: (TermSetWithTerms) -> Unit,
     onSearchClicked: () -> Unit
 ) {
     Scaffold(
@@ -131,7 +130,8 @@ private fun HomeScreen(
                             item {
                                 HomeItem(
                                     termSetWithTerms = it,
-                                    onFavoriteClicked = onFavoriteClicked,
+                                    onClick = { onTermSetClick(it) },
+                                    onFavoriteClick = { onFavoriteClick(it) },
                                 )
                             }
                         }
@@ -145,7 +145,8 @@ private fun HomeScreen(
 @Composable
 private fun HomeItem(
     termSetWithTerms: TermSetWithTerms,
-    onFavoriteClicked: (id: String) -> Unit,
+    onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
     color: Pair<Color, Color> = Color.Blue to Color.Green
 ) {
     Column(
@@ -157,7 +158,8 @@ private fun HomeItem(
                     color.toList()
                 ), RoundedCornerShape(24.dp)
             )
-            .padding(start = 16.dp, bottom = 16.dp),
+            .padding(start = 16.dp, bottom = 16.dp)
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -170,11 +172,13 @@ private fun HomeItem(
                         .padding(top = 16.dp),
                 )
                 IconButton(
-                    onClick = { onFavoriteClicked(termSetWithTerms.termSet.id) },
+                    onClick = onFavoriteClick,
                     modifier = Modifier.padding(top = 4.dp, end = 4.dp)
                 ) {
                     Icon(
-                        painter = if (true) painterResource(id = R.drawable.favorite_filled) else painterResource(
+                        painter = if (termSetWithTerms.terms.any { it.isFavorite }) {
+                            painterResource(id = R.drawable.favorite_filled)
+                        } else painterResource(
                             id = R.drawable.favorite_outlined
                         ),
                         contentDescription = null,

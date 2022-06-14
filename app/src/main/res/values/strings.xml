@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IT_dictionary</string>
+    <string name="app_name">Справочник IT-терминов</string>
     <string name="bottom_navigation_home">Главная</string>
     <string name="bottom_navigation_suggest">Предложить</string>
     <string name="bottom_navigation_favorite">Избранное</string>

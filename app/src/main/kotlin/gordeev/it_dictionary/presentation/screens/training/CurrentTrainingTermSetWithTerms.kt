@@ -1,10 +1,10 @@
 package gordeev.it_dictionary.presentation.screens.training
 
-import dagger.hilt.android.scopes.ViewModelScoped
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ViewModelScoped
+@Singleton
 class CurrentTrainingTermSetWithTerms @Inject constructor() {
     lateinit var termSetWithTerms: TermSetWithTerms
 }

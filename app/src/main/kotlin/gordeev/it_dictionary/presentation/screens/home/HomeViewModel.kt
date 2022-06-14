@@ -9,17 +9,41 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    dictionaryRepository: DictionaryRepository
+    private val dictionaryRepository: DictionaryRepository
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<TermSetWithTerms>> =
         dictionaryRepository.termSetWithTermsPagingSource(PAGING_CONFIG).cachedIn(viewModelScope)
 
-    fun addTermSetToFavorite(id: String) {
+    private var termSetWithTerms: TermSetWithTerms? = null
+        set(value) {
+            selectedTermSetIdState.value = value?.termSet?.id
+            field = value
+        }
+    private var selectedTermSetIdState = MutableStateFlow<String?>(null)
+    val selectedTermSetId: StateFlow<String?> = selectedTermSetIdState
+
+    fun addTermSetToFavorite() {
+        termSetWithTerms?.let {
+            viewModelScope.launch {
+                dictionaryRepository.setTermsAreFavorite(it.terms.associate { it.termId to true })
+            }
+        }
+    }
+
+    fun onOpenDialog(termSetWithTerms: TermSetWithTerms) {
+        this.termSetWithTerms = termSetWithTerms
+    }
+
+    fun onCloseDialog() {
+        termSetWithTerms = null
     }
 
     companion object {

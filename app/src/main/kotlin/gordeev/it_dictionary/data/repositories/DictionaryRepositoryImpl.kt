@@ -6,22 +6,25 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import gordeev.it_dictionary.data.data_sources.InvokeError
+import gordeev.it_dictionary.data.data_sources.InvokeStarted
+import gordeev.it_dictionary.data.data_sources.InvokeStatus
+import gordeev.it_dictionary.data.data_sources.InvokeSuccess
 import gordeev.it_dictionary.data.data_sources.local.daos.DictionaryDao
+import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSet.Companion.fromRemoteTermSet
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsFavorite
 import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermIsLearned
+import gordeev.it_dictionary.data.data_sources.local.entities.update.UpdateTermWithRemoteData.Companion.fromRemoteTerm
 import gordeev.it_dictionary.data.data_sources.remote.DictionaryRemoteDataSource
 import gordeev.it_dictionary.data.data_sources.remote.entities.requests.RequestToAddTerm
-import gordeev.it_dictionary.data.data_sources.utils.InvokeStatus
 import gordeev.it_dictionary.data.utils.DictionaryRemoteMediator
 import gordeev.it_dictionary.data.utils.DictionarySearchRemoteMediator
+import kotlinx.coroutines.*
 import kotlinx.coroutines.CoroutineStart.LAZY
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -51,6 +54,30 @@ class DictionaryRepositoryImpl @Inject constructor(
             )
         )
 
+    override fun saveSecretToFavorite(): Flow<InvokeStatus> = callbackFlow<InvokeStatus> {
+        trySend(InvokeStarted)
+        kotlin.runCatching { dictionaryRemoteDataSource.getSecret() }
+            .onFailure {
+                trySend(InvokeError(it))
+            }
+            .onSuccess {
+                it.map { remoteTermSet ->
+                    dictionaryDao.insertTermSet(remoteTermSet.fromRemoteTermSet())
+                    remoteTermSet.terms.forEach { remoteTerm ->
+                        dictionaryDao.insertOrUpdateTerm(remoteTerm.fromRemoteTerm(remoteTermSet.id))
+                        dictionaryDao.updateTermIsFavorite(
+                            UpdateTermIsFavorite(
+                                remoteTerm.id,
+                                true
+                            )
+                        )
+                    }
+                }
+                trySend(InvokeSuccess)
+            }
+        awaitCancellation()
+    }.flowOn(Dispatchers.IO)
+
     @OptIn(DelicateCoroutinesApi::class)
     val allTermSets = GlobalScope.async(
         Dispatchers.IO,
@@ -60,7 +87,8 @@ class DictionaryRepositoryImpl @Inject constructor(
     override fun observableTermSetsByName(name: String): Flow<List<String>> =
         flow {
             emit(
-                allTermSets.await().filter { it.contains(name) }
+                allTermSets.await()
+                    .filter { it.contains(name, ignoreCase = true) }
             )
         }
 

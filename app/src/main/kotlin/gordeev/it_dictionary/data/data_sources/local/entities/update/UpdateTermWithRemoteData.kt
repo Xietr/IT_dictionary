@@ -6,7 +6,7 @@ class UpdateTermWithRemoteData(
     val termId: String,
     val termSetId: String,
     val termName: String,
-    val meaning: String
+    val meaning: String,
 ) {
     companion object {
         fun RemoteTerm.fromRemoteTerm(termSetId: String) =

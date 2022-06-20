@@ -1,7 +1,6 @@
 package gordeev.it_dictionary.presentation.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -17,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -127,12 +127,14 @@ private fun HomeScreen(
                 ) {
                     for (index in 0 until list.itemCount) {
                         list[index]?.let {
-                            item {
-                                HomeItem(
-                                    termSetWithTerms = it,
-                                    onClick = { onTermSetClick(it) },
-                                    onFavoriteClick = { onFavoriteClick(it) },
-                                )
+                            if (it.termSet.id.contains("secret").not()) {
+                                item {
+                                    HomeItem(
+                                        termSetWithTerms = it,
+                                        onClick = { onTermSetClick(it) },
+                                        onFavoriteClick = { onFavoriteClick(it) },
+                                    )
+                                }
                             }
                         }
                     }
@@ -147,48 +149,53 @@ private fun HomeItem(
     termSetWithTerms: TermSetWithTerms,
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    color: Pair<Color, Color> = Color.Blue to Color.Green
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
-            .background(
-                Brush.linearGradient(
-                    color.toList()
-                ), RoundedCornerShape(24.dp)
-            )
-            .padding(start = 16.dp, bottom = 16.dp)
-            .clickable(onClick = onClick),
-        verticalArrangement = Arrangement.SpaceBetween
+            .aspectRatio(1.04f)
+            .clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onClick)
     ) {
-        CompositionLocalProvider(LocalContentColor provides Color.White) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                    text = termSetWithTerms.termSet.name,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 16.dp),
-                )
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier.padding(top = 4.dp, end = 4.dp)
-                ) {
-                    Icon(
-                        painter = if (termSetWithTerms.terms.any { it.isFavorite }) {
-                            painterResource(id = R.drawable.favorite_filled)
-                        } else painterResource(
-                            id = R.drawable.favorite_outlined
-                        ),
-                        contentDescription = null,
+        AsyncImage(
+            model = termSetWithTerms.termSet.backgroundUrl,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            CompositionLocalProvider(LocalContentColor provides Color.White) {
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = termSetWithTerms.termSet.name,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 16.dp),
                     )
+                    IconButton(
+                        onClick = onFavoriteClick,
+                        modifier = Modifier.padding(top = 4.dp, end = 4.dp)
+                    ) {
+                        Icon(
+                            painter = if (termSetWithTerms.terms.any { it.isFavorite }) {
+                                painterResource(id = R.drawable.favorite_filled)
+                            } else painterResource(
+                                id = R.drawable.favorite_outlined
+                            ),
+                            contentDescription = null,
+                        )
+                    }
                 }
+                Text(
+                    stringQuantityResource(R.plurals.terms_amount, termSetWithTerms.terms.count()),
+                    style = MaterialTheme.typography.subtitle1,
+                )
             }
-            Text(
-                stringQuantityResource(R.plurals.terms_amount, termSetWithTerms.terms.count()),
-                style = MaterialTheme.typography.subtitle1,
-            )
         }
     }
 }

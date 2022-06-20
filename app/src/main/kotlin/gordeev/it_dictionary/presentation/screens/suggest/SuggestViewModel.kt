@@ -3,9 +3,9 @@ package gordeev.it_dictionary.presentation.screens.suggest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import gordeev.it_dictionary.data.data_sources.utils.InvokeError
-import gordeev.it_dictionary.data.data_sources.utils.InvokeStarted
-import gordeev.it_dictionary.data.data_sources.utils.InvokeSuccess
+import gordeev.it_dictionary.data.data_sources.InvokeError
+import gordeev.it_dictionary.data.data_sources.InvokeStarted
+import gordeev.it_dictionary.data.data_sources.InvokeSuccess
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import gordeev.it_dictionary.presentation.screens.suggest.ErrorType.EMPTY_INPUT
 import gordeev.it_dictionary.presentation.screens.suggest.ErrorType.NETWORK
@@ -29,7 +29,7 @@ class SuggestViewModel @Inject constructor(
     private val termSetName = MutableStateFlow("")
     private val termMeaning = MutableStateFlow("")
 
-    private var termSetNameOptions = MutableStateFlow(emptyList<String>())
+    private val termSetNameOptions = MutableStateFlow(emptyList<String>())
 
     val state = combine(
         loadingState, successState, errorState,
@@ -66,6 +66,11 @@ class SuggestViewModel @Inject constructor(
                     .collect {
                         loadingState.emit(it is InvokeStarted)
                         successState.emit(it is InvokeSuccess)
+                        if (it is InvokeSuccess) {
+                            termName.value = ""
+                            termSetName.value = ""
+                            termMeaning.value = ""
+                        }
                         errorState.emit(if (it is InvokeError) NETWORK else null)
                     }
             } else {

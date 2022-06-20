@@ -1,5 +1,7 @@
 package gordeev.it_dictionary.presentation.screens.favorite
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,17 +13,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    dictionaryRepository: DictionaryRepository,
+    private val dictionaryRepository: DictionaryRepository,
     private val currentTrainingTermSetWithTerms: CurrentTrainingTermSetWithTerms
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
 
     private val currentTab = MutableStateFlow(TO_LEARN)
 
-    private val favoriteTermSetsWithTerms = dictionaryRepository.getAllFavoriteTermSetsWithTerms()
+    private val favoriteTermSetsWithTerms = MutableStateFlow(emptyList<TermSetWithTerms>())
 
     val state = combine(currentTab, favoriteTermSetsWithTerms) { tab, termSetsWithTerms ->
         FavoriteScreenState(
@@ -49,5 +52,12 @@ class FavoriteViewModel @Inject constructor(
 
     fun onOpenTrainingScreen(termSetWithTerms: TermSetWithTerms) {
         currentTrainingTermSetWithTerms.termSetWithTerms = termSetWithTerms
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        viewModelScope.launch {
+            dictionaryRepository.getAllFavoriteTermSetsWithTerms()
+                .collect(favoriteTermSetsWithTerms)
+        }
     }
 }

@@ -2,9 +2,9 @@ package gordeev.it_dictionary.data.repositories
 
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import gordeev.it_dictionary.data.data_sources.InvokeStatus
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
-import gordeev.it_dictionary.data.data_sources.utils.InvokeStatus
 import kotlinx.coroutines.flow.Flow
 
 interface DictionaryRepository {
@@ -16,6 +16,8 @@ interface DictionaryRepository {
     fun observableTermSetsByName(name: String): Flow<List<String>>
 
     fun observableTermSetById(id: String): Flow<TermSetWithTerms>
+
+    fun saveSecretToFavorite(): Flow<InvokeStatus>
 
     suspend fun setTermIsFavorite(termId: String, isFavorite: Boolean)
 

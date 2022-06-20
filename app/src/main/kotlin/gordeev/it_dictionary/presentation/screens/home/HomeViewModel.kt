@@ -36,6 +36,7 @@ class HomeViewModel @Inject constructor(
                 dictionaryRepository.setTermsAreFavorite(it.terms.associate { it.termId to true })
             }
         }
+        termSetWithTerms = null
     }
 
     fun onOpenDialog(termSetWithTerms: TermSetWithTerms) {

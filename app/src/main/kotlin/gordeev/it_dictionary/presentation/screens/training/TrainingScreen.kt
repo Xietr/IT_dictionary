@@ -58,7 +58,6 @@ private fun TrainingScreen(
     onTermRememberClicked: (remembered: Boolean) -> Unit,
     viewState: TrainingScreenState
 ) {
-
     val scrollState = rememberScrollState(0)
     Scaffold { paddingValues ->
         Column(

@@ -1,20 +1,23 @@
 package gordeev.it_dictionary.presentation.screens.term_set_partial_add
 
+import android.widget.Toast
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import gordeev.it_dictionary.R
 import gordeev.it_dictionary.data.data_sources.local.entities.result.Term
-import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerms
 import gordeev.it_dictionary.presentation.theme.checkboxColors
 import gordeev.it_dictionary.presentation.ui.TextButton
 import gordeev.it_dictionary.presentation.ui.TextButtonColors.Primary
@@ -32,10 +35,10 @@ fun TermSetPartialAddScreen() {
 private fun TermSetPartialAddScreen(
     viewModel: TermSetPartialAddViewModel
 ) {
-    val termSet by rememberStateWithLifecycle(viewModel.termSet)
-    termSet?.let {
+    val state by rememberStateWithLifecycle(viewModel.state)
+    state.termSetWithTerms?.let {
         TermSetPartialAddScreen(
-            it,
+            state,
             onButtonClick = viewModel::onAddWordsClicked,
             onFavoriteChanged = viewModel::onFavoriteChanged
         )
@@ -44,13 +47,20 @@ private fun TermSetPartialAddScreen(
 
 @Composable
 private fun TermSetPartialAddScreen(
-    termSetWithTerms: TermSetWithTerms,
+    viewState: TermSetPartialAddViewState,
     onButtonClick: () -> Unit,
     onFavoriteChanged: (Term, Boolean) -> Unit
 ) {
+    val context = LocalContext.current
+    val successMessage = context.getString(R.string.added_to_favorite_successfully)
+    LaunchedEffect(viewState.isSuccess) {
+        if (viewState.isSuccess) {
+            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
     Scaffold(
         topBar = {
-            with(termSetWithTerms.termSet) {
+            with(viewState.termSetWithTerms!!.termSet) {
                 Toolbar(name, description)
             }
         }
@@ -63,7 +73,7 @@ private fun TermSetPartialAddScreen(
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
-                termSetWithTerms.terms.forEach { term ->
+                viewState.termSetWithTerms!!.terms.forEach { term ->
                     item {
                         AddTermSearchResult(term) {
                             onFavoriteChanged(term, it)
@@ -113,12 +123,15 @@ private fun AddTermSearchResult(term: Term, onCheckedChange: (Boolean) -> Unit) 
     Row(
         modifier = Modifier
             .drawUnderline()
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
+            .clickable { onCheckedChange(term.isFavorite.not()) },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Checkbox(
             checked = term.isFavorite,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
             colors = checkboxColors
         )
         Text(text = term.termName, style = MaterialTheme.typography.h6)

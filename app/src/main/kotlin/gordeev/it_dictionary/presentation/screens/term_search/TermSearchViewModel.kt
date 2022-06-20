@@ -7,6 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import gordeev.it_dictionary.data.data_sources.InvokeError
+import gordeev.it_dictionary.data.data_sources.InvokeSuccess
 import gordeev.it_dictionary.data.data_sources.local.entities.result.TermSetWithTerm
 import gordeev.it_dictionary.data.repositories.DictionaryRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,16 +23,22 @@ class TermSearchViewModel @Inject constructor(
     private val dictionaryRepository: DictionaryRepository
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
+    private val successState = MutableStateFlow(false)
     private val loadingState = MutableStateFlow(false)
     private val errorState = MutableStateFlow(false)
+    private val secretActivatedState = MutableStateFlow(false)
 
     val state = combine(
         searchQuery,
+        secretActivatedState,
+        successState,
         loadingState,
         errorState
-    ) { searchQuery, isLoading, isError ->
+    ) { searchQuery, isSecretActivated, isSuccess, isLoading, isError ->
         TermSearchViewState(
             searchValue = searchQuery,
+            isSecretActivated = isSecretActivated,
+            isSuccess = isSuccess,
             isLoading = isLoading,
             isError = isError
         )
@@ -41,7 +49,15 @@ class TermSearchViewModel @Inject constructor(
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private var searchResultPagedList = searchQuery.flatMapLatest {
+    private val searchResultPagedList = searchQuery.flatMapLatest {
+        if (it.contains(SECRET_KEY, ignoreCase = true)) {
+            dictionaryRepository.saveSecretToFavorite().collect { invokeStatus ->
+                errorState.value = invokeStatus is InvokeError
+                if (invokeStatus is InvokeSuccess) {
+                    secretActivatedState.value = true
+                }
+            }
+        }
         dictionaryRepository
             .termSetWithTermsPagingSourceByTermName(PAGING_CONFIG, it)
     }.cachedIn(viewModelScope)
@@ -76,6 +92,12 @@ class TermSearchViewModel @Inject constructor(
                 dictionaryRepository.setTermIsFavorite(it.key, it.value)
             }
         }
+        successState.value = true
+        successState.value = false
+    }
+
+    fun onSecretDialogHide() {
+        secretActivatedState.value = false
     }
 
     companion object {
@@ -84,5 +106,6 @@ class TermSearchViewModel @Inject constructor(
             initialLoadSize = 16,
             prefetchDistance = 0
         )
+        private const val SECRET_KEY = "ркси"
     }
 }

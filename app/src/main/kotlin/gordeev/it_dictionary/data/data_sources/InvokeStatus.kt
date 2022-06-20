@@ -1,4 +1,4 @@
-package gordeev.it_dictionary.data.data_sources.utils
+package gordeev.it_dictionary.data.data_sources
 
 sealed class InvokeStatus
 object InvokeStarted : InvokeStatus()
